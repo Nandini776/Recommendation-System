@@ -28,14 +28,24 @@ def recommend_ui():
     book_name = [...]  # your list of book names
     return render_template("recommend.html", book_name=list(pt.index))
 
+# ✅ New route for AJAX-based book suggestions
+@app.route('/get_book_suggestions')
+def get_book_suggestions():
+    query = request.args.get('q', '').lower()
+    matches = [book for book in pt.index if query in book.lower()]
+    return {'books': matches[:10]}  # Return top 10 suggestions
+
 @app.route('/recommend_books',methods=['POST'])
 def recommend():
     user_input = request.form.get('user_input')
-    if user_input not in pt.index:
+    matches = [book for book in pt.index if user_input.lower() in book.lower()]
+    if not matches:
         return render_template('recommend.html', data=None, error="Book not found")
 
+    # Use the first matching book title
+    user_input = matches[0]
     index = np.where(pt.index == user_input)[0][0]
-    similar_items = sorted(list(enumerate(similarity_score[index])), key=lambda x: x[1], reverse=True)[1:5]
+    similar_items = sorted(list(enumerate(similarity_score[index])), key=lambda x: x[1], reverse=True)[1:6]
 
     data = []
     for i in similar_items:
