@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Book Recommender System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .text-white {
+            color: white;
+        }
+    </style>
+</head>
+<body style="background-color:black">
+    <nav class="navbar" style="background-color:#00a65a">
+
+            <a class="navbar-brand">My Book Recommender</a>
+            <ul class="nav navbar-nav">
+                <li><a href="/" >Home</a></li>
+                <li><a href="/recommend">Recommend</a></li>
+                <li><a class="nav-link text-white">Contact</a></li>
+            </ul>
+
+    </nav>
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="text-white">Recommend Books</h1>
+            </div>
+        </div>
+        <form action="/recommend_books"method="post" >
+            <input name="user_input" class="form-control" placeholder="Type a book name..."><br>
+            <datalist id="book-list">
+                {% for book in book_name %}
+                    <option value="{{ book }}">
+                {% endfor %}
+            </datalist>
+
+            <button type="submit" class="btn btn-lg btn-warning ">Submit</button>
+        </form>
+        {% if error %}
+            <div class="alert alert-danger mt-3" role="alert">
+                {{ error }}
+            </div>
+        {% endif %}
+        {% if data %}
+        <div class="row mt-4">
+            {% for book in data %}
+            <div class="col-md-3 mb-4">
+                <div class="card bg-dark text-white h-100" style="height: 400px;">
+                   <img src="{{book[2]}}" class="card-img-top mx-auto d-block" alt="{{ book.title }}" style="width: 150px; height: auto; object-fit: cover;">
+
+                    <div class="card-body">
+                        <h4 class="card-title" style="font-size: 1rem;">{{ book[0]}}</h4>
+                        <h6 class="card-text" style="font-size: 0.8rem;">{{ book[1] }}</h6>
+                    </div>
+                </div>
+            </div>
+
+            {% endfor %}
+        </div>
+        {% endif %}
+
+
+
+
+
+        </div>
+    </div>
+
+
+
+
+</body>
+</html>
