@@ -118,7 +118,7 @@ footer {
   padding: 30px 0;
   color: #aaa;
   margin-top: 80px;
-  text-align: center; /* Center all text */
+  text-align: center; 
 }
 
 footer a {
@@ -133,7 +133,7 @@ footer a:hover {
 }
 
 footer p {
-  margin: 5px 0; /* Add small spacing between lines */
+  margin: 5px 0; 
 }
 
   </style>
@@ -152,8 +152,9 @@ footer p {
   <!-- Search -->
   <div class="container text-center">
     <div class="search-box mx-auto col-md-8">
-      <form action="/recommend_books" method="post">
-        <input type="text" name="user_input" placeholder="🔍 Type a book name...">
+     <form action="/recommend_books" method="post" autocomplete="off">
+    <input name="user_input" id="bookInput" class="form-control" placeholder="Type a book name..."
+           list="book-list" autocomplete="off" autocorrect="off" spellcheck="false"><br>
         <button type="submit" class="btn btn-custom mt-3">Get Recommendations</button>
       </form>
     </div>
