@@ -152,9 +152,8 @@ footer p {
   <!-- Search -->
   <div class="container text-center">
     <div class="search-box mx-auto col-md-8">
-     <form action="/recommend_books" method="post" autocomplete="off">
-    <input name="user_input" id="bookInput" class="form-control" placeholder="Type a book name..."
-           list="book-list" autocomplete="off" autocorrect="off" spellcheck="false"><br>
+     <form action="/recommend_books" method="post">
+        <input type="text" name="user_input" placeholder="🔍 Type a book name..."
         <button type="submit" class="btn btn-custom mt-3">Get Recommendations</button>
       </form>
     </div>
