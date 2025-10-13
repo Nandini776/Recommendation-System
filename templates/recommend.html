@@ -6,8 +6,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background-color: black;
-            color: white;
+            background-color: #000;
+            color: #fff;
+            font-family: 'Poppins', sans-serif;
         }
         .card-img-top {
             width: 100%;
@@ -15,10 +16,13 @@
             object-fit: cover;
             border-radius: 10px;
         }
+        .navbar {
+            background-color: #00a65a;
+        }
     </style>
 </head>
 <body>
-    <nav class="navbar" style="background-color:#00a65a">
+    <nav class="navbar">
         <div class="container-fluid">
             <p class="navbar-brand text-white" style="font-size: 2rem; font-weight: bold;">My Book Recommender</p>
             <ul class="nav navbar-nav">
@@ -30,11 +34,7 @@
     </nav>
 
     <div class="container mt-5">
-        <div class="row">
-            <div class="col-12">
-                <h1 class="text-white">Recommend Books</h1>
-            </div>
-        </div>
+        <h1 class="text-white mb-4">Recommend Books</h1>
 
         <form action="/recommend_books" method="post">
             <input name="user_input" id="bookInput" class="form-control" placeholder="Type a book name..." list="book-list" autocomplete="off"><br>
@@ -54,7 +54,7 @@
         <div class="row mt-4">
             {% for book in data %}
             <div class="col-md-3 mb-4">
-                <div class="card bg-dark text-white h-100">
+                <div class="card bg-dark text-white h-100 shadow">
                     <img src="{{book[2]}}" class="card-img-top mx-auto d-block" alt="{{ book[0] }}">
                     <div class="card-body">
                         <h5 class="card-title">{{ book[0] }}</h5>
