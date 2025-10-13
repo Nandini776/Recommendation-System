@@ -9,7 +9,7 @@ pt = pickle.load(open("pt.pkl", "rb"))
 books = pickle.load(open("books.pkl", "rb"))
 similarity_score = pickle.load(open("similarity_score.pkl", "rb"))
 
-app = Flask(_name_)
+app = Flask(__name__)
 
 def get_high_quality_cover(title):
     try:
