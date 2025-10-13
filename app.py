@@ -1,77 +1,91 @@
-from flask import Flask, render_template, request
-import pickle
-import numpy as np
-import pandas as pd
-import requests
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Book Recommender</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #1a202c;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .navbar {
+            background-color: #2d3748;
+        }
+        .navbar-brand, .nav-link {
+            color: #48BB78 !important;
+            font-weight: bold;
+        }
+        .card {
+            background-color: #2d3748;
+            border: none;
+            border-radius: 10px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            height: 100%; /* Ensure cards in a row are same height */
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+        }
+        .card-img-top {
+            width: 100%;
+            height: 250px; /* Taller image for better quality display */
+            object-fit: cover;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+        .card-body {
+            padding: 1rem;
+        }
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            height: 3.3em; /* Fixed height for 2 lines of text */
+            overflow: hidden;
+        }
+        .card-text {
+            color: #A0AEC0;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
 
-popular_df = pickle.load(open("popular.pkl", "rb"))
-pt = pickle.load(open("pt.pkl", "rb"))
-books = pickle.load(open("books.pkl", "rb"))
-similarity_score = pickle.load(open("similarity_score.pkl", "rb"))
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand">Book Recommender</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/recommend">Recommend</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-app = Flask(_name_)
+    <div class="container mt-4">
+        <h1 class="text-center mb-4">Top 50 Books</h1>
+        <div class="row">
+            {% for i in range(book_name|length) %}
+            <div class="col-md-3 mb-4">
+                <div class="card">
+                    <img src="{{ image[i] }}" class="card-img-top" alt="{{ book_name[i] }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ book_name[i] }}</h5>
+                        <p class="card-text">{{ author[i] }}</p>
+                        <p class="card-text">Votes: {{ votes[i] }}</p>
+                        <p class="card-text">Rating: {{ rating[i]|round(2) }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
 
-def get_high_quality_cover(title):
-    try:
-        url = f"https://openlibrary.org/search.json?title={title}"
-        res = requests.get(url, timeout=5).json()
-        if res.get("docs"):
-            cover_id = res["docs"][0].get("cover_i")
-            if cover_id:
-                return f"https://covers.openlibrary.org/b/id/{cover_id}-L.jpg"
-    except Exception:
-        pass
-    return None
+</body>
+</html>
 
-@app.route('/')
-def index():
-    high_quality_images = []
-    for title, img_url in zip(popular_df['Book-Title'], popular_df['Image-URL-M']):
-        cover_url = get_high_quality_cover(title)
-        high_quality_images.append(cover_url if cover_url else img_url)
-    return render_template(
-        'index.html',
-        book_name=list(popular_df['Book-Title'].values),
-        author=list(popular_df['Book-Author'].values),
-        image=high_quality_images,
-        votes=list(popular_df['num_ratings'].values),
-        rating=list(popular_df['avg_rating'].values)
-    )
-
-@app.route("/recommend")
-def recommend_ui():
-    return render_template("recommend.html", book_name=list(pt.index))
-
-@app.route('/get_book_suggestions')
-def get_book_suggestions():
-    query = request.args.get('q', '').lower()
-    matches = [book for book in pt.index if query in book.lower()]
-    return {'books': matches[:10]}
-
-@app.route('/recommend_books', methods=['POST'])
-def recommend():
-    user_input = request.form.get('user_input')
-    matches = [book for book in pt.index if user_input.lower() in book.lower()]
-    if not matches:
-        return render_template('recommend.html', data=None, error="Book not found")
-    user_input = matches[0]
-    index = np.where(pt.index == user_input)[0][0]
-    similar_items = sorted(list(enumerate(similarity_score[index])), key=lambda x: x[1], reverse=True)[1:5]
-    data = []
-    for i in similar_items:
-        item = []
-        temp_df = books[books['Book-Title'] == pt.index[i[0]]]
-        title = list(temp_df.drop_duplicates('Book-Title')['Book-Title'].values)[0]
-        author = list(temp_df.drop_duplicates('Book-Title')['Book-Author'].values)[0]
-        cover_url = get_high_quality_cover(title)
-        if not cover_url:
-            cover_url = list(temp_df.drop_duplicates('Book-Title')['Image-URL-M'].values)[0]
-        item.extend([title, author, cover_url])
-        data.append(item)
-    return render_template('recommend.html', data=data)
-
-if _name_ == '_main_':
-    app.run(debug=True)
 
 
 
