@@ -9,12 +9,13 @@ pt = pickle.load(open("pt.pkl", "rb"))
 books = pickle.load(open("books.pkl", "rb"))
 similarity_score = pickle.load(open("similarity_score.pkl", "rb"))
 
+# --- Corrected syntax: __name__ with double underscores ---
 app = Flask(__name__)
 
 @app.route('/')
 def index():
+    # --- More efficient method for HD images using ISBN ---
     # Merge with the main books dataframe to get the ISBN for each popular book
-    # Using drop_duplicates to prevent issues with multiple editions
     hd_popular_df = popular_df.merge(books, on='Book-Title').drop_duplicates('Book-Title').head(50)
     
     # Create a new list of high-definition image URLs using the ISBN
@@ -23,8 +24,7 @@ def index():
     return render_template(
         'index.html',
         book_name=list(hd_popular_df['Book-Title'].values),
-        # --- THIS IS THE FIXED LINE ---
-        author=list(hd_popular_df['Book-Author_x'].values), # Use the correct column name after merge
+        author=list(hd_popular_df['Book-Author_x'].values), # Use correct column name after merge
         image=hd_images,
         votes=list(hd_popular_df['num_ratings'].values),
         rating=list(hd_popular_df['avg_rating'].values)
@@ -44,38 +44,32 @@ def get_book_suggestions():
 def recommend():
     user_input = request.form.get('user_input')
     
-    # Handle case where user input is not in the pivot table
     if user_input not in pt.index:
-        return render_template('recommend.html', data=None, error=f"'{user_input}' not found in our database. Please try another.", book_name=list(pt.index))
+        return render_template('recommend.html', data=None, error=f"'{user_input}' not found. Please try another.", book_name=list(pt.index))
         
     index = np.where(pt.index == user_input)[0][0]
-    similar_items = sorted(list(enumerate(similarity_score[index])), key=lambda x: x[1], reverse=True)[1:5] # Fetches 4 similar books
+    similar_items = sorted(list(enumerate(similarity_score[index])), key=lambda x: x[1], reverse=True)[1:5]
     
     data = []
     for i in similar_items:
         item = []
-        temp_df = books[books['Book-Title'] == pt.index[i[0]]]
+        temp_df = books[books['Book-Title'] == pt.index[i[0]]].drop_duplicates('Book-Title')
         
-        # Ensure we get unique entries
-        temp_df = temp_df.drop_duplicates('Book-Title')
-        
-        # Extract details
+        # --- Efficiently get details and HD image URL ---
         title = temp_df['Book-Title'].values[0]
         author = temp_df['Book-Author'].values[0]
         isbn = temp_df['ISBN'].values[0]
-        
-        # Create HD image URL
         hd_image_url = f"https://covers.openlibrary.org/b/isbn/{isbn}-L.jpg"
         
-        # Populate the item list
         item.extend([title, author, hd_image_url])
         data.append(item)
         
     return render_template('recommend.html', data=data, book_name=list(pt.index))
 
-# Corrected syntax for the main execution block
+# --- Corrected syntax: __name__ and __main__ with double underscores ---
 if __name__ == '__main__':
     app.run(debug=True)
+
 
 
 
