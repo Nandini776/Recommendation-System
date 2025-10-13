@@ -41,7 +41,7 @@ def recommend():
 
     user_input = matches[0]
     index = np.where(pt.index == user_input)[0][0]
-    similar_items = sorted(list(enumerate(similarity_score[index])), key=lambda x: x[1], reverse=True)[1:6]
+    similar_items = sorted(list(enumerate(similarity_score[index])), key=lambda x: x[1], reverse=True)[1:5]
 
     data = []
     for i in similar_items:
