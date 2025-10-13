@@ -1,110 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Top 50 Books</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Top 50 Books</title>
 
-    <style>
-        body {
-            background-color: #0b0b0b;
-            color: #ffffff;
-            font-family: 'Poppins', sans-serif;
-            margin: 0;
-            padding: 0;
-        }
+  <style>
+    body {
+      background-color: #0a0a0a;
+      color: #ffffff;
+      font-family: "Poppins", sans-serif;
+      margin: 0;
+      padding: 0;
+    }
 
-        h1 {
-            text-align: center;
-            color: #00ff80;
-            margin-top: 40px;
-            font-size: 2.5rem;
-        }
+    h1 {
+      text-align: center;
+      color: #00ff80;
+      margin-top: 40px;
+      font-size: 2.5rem;
+    }
 
-        .book-grid {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 25px;
-            padding: 40px;
-        }
+    .book-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 25px;
+      padding: 40px;
+      justify-items: center;
+    }
 
-        .book-item {
-            background-color: #1a1a1a;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-            padding: 15px;
-            text-align: center;
-            width: 200px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
+    .book-item {
+      background-color: #1a1a1a;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+      padding: 15px;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      width: 200px;
+    }
 
-        .book-item:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 6px 14px rgba(0,0,0,0.6);
-        }
+    .book-item:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.6);
+    }
 
-        .book-cover {
-            width: 180px;
-            height: 270px;
-            object-fit: contain;   /* ensures no cropping */
-            border-radius: 10px;
-            background-color: #111;
-            margin-bottom: 10px;
-        }
+    /* FIXED IMAGE STYLE */
+    .book-cover-container {
+      width: 180px;
+      height: 270px;
+      background-color: #111;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      border-radius: 10px;
+      margin: 0 auto 10px;
+    }
 
-        .book-title {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #00ffcc;
-            margin-bottom: 5px;
-        }
+    .book-cover {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
 
-        .book-author {
-            font-size: 0.9rem;
-            color: #bbbbbb;
-            margin-bottom: 8px;
-        }
+    .book-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #00ffcc;
+      margin-bottom: 5px;
+    }
 
-        .book-rating {
-            font-size: 0.85rem;
-            color: #ffaa00;
-        }
+    .book-author {
+      font-size: 0.9rem;
+      color: #bbbbbb;
+      margin-bottom: 8px;
+    }
 
-        .book-votes {
-            font-size: 0.8rem;
-            color: #888;
-        }
+    .book-rating {
+      font-size: 0.85rem;
+      color: #ffaa00;
+    }
 
-        @media (max-width: 768px) {
-            .book-item {
-                width: 45%;
-            }
-        }
+    .book-votes {
+      font-size: 0.8rem;
+      color: #888;
+    }
 
-        @media (max-width: 480px) {
-            .book-item {
-                width: 90%;
-            }
-        }
-    </style>
+    @media (max-width: 480px) {
+      .book-item {
+        width: 90%;
+      }
+    }
+  </style>
 </head>
 <body>
-    <h1>🌟 Top 50 Books</h1>
+  <h1>🌟 Top 50 Books</h1>
 
-    <div class="book-grid">
-        {% for i in range(0, book_name|length) %}
-        <div class="book-item">
-            <img src="{{ image[i] }}" alt="{{ book_name[i] }}" class="book-cover">
-            <div class="book-title">{{ book_name[i] }}</div>
-            <div class="book-author">{{ author[i] }}</div>
-            <div class="book-rating">⭐ {{ rating[i]|round(2) }}</div>
-            <div class="book-votes">{{ votes[i] }} votes</div>
-        </div>
-        {% endfor %}
+  <div class="book-grid">
+    {% for i in range(0, book_name|length) %}
+    <div class="book-item">
+      <div class="book-cover-container">
+        <img
+          src="{{ image[i] }}"
+          alt="{{ book_name[i] }}"
+          class="book-cover"
+        />
+      </div>
+      <div class="book-title">{{ book_name[i] }}</div>
+      <div class="book-author">{{ author[i] }}</div>
+      <div class="book-rating">⭐ {{ rating[i]|round(2) }}</div>
+      <div class="book-votes">{{ votes[i] }} votes</div>
     </div>
+    {% endfor %}
+  </div>
 </body>
 </html>
+
 
 
 
