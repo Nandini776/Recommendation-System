@@ -118,58 +118,19 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+# ✅ Navbar (Recommend removed)
 st.markdown("""
 <div class="navbar" id="top">
     <h1>📚 Book Recommendation System</h1>
     <div>
         <a href="#home">Home</a>
-        <a href="#recommend">Recommend</a>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
 st.markdown('<div class="content-container">', unsafe_allow_html=True)
 
-if pt is not None:
-    st.markdown("<h2 class='main-title' id='recommend'>📖 Recommend Books</h2>", unsafe_allow_html=True)
-
-    book_list = ["Type book name..."] + list(pt.index)
-    selected_book_name = st.selectbox(
-        "Type or select a book to get recommendations",
-        book_list,
-        index=0
-    )
-
-    if st.button('Show Recommendations'):
-        if selected_book_name == "Type book name...":
-            st.warning("Please select a book from the dropdown list.")
-        else:
-            st.subheader(f"Recommendations for {selected_book_name}:")
-            
-            index = np.where(pt.index == selected_book_name)[0][0]
-            similar_items = sorted(list(enumerate(similarity_score[index])), key=lambda x: x[1], reverse=True)[1:6]
-
-            rec_cols = st.columns(5)
-            
-            for i, item in enumerate(similar_items):
-                with rec_cols[i]:
-                    temp_df = books[books['Book-Title'] == pt.index[item[0]]]
-                    rec_title = temp_df.drop_duplicates('Book-Title')['Book-Title'].values[0]
-                    rec_author = temp_df.drop_duplicates('Book-Title')['Book-Author'].values[0]
-                    rec_image = temp_df.drop_duplicates('Book-Title')['Image-URL-M'].values[0]
-
-                    st.markdown(f"""
-                    <div class="book-card-wrapper">
-                        <div class="book-card">
-                            <img src="{rec_image}" alt="{rec_title}">
-                            <div class="book-card-content">
-                                <h3>{rec_title}</h3>
-                                <p>Author: {rec_author}</p>
-                            </div>
-                        </div>
-                    </div>
-                    """, unsafe_allow_html=True)
-
+# ✅ Display Top 50 Books only
 if popular_df is not None:
     st.markdown("<h2 class='main-title' id='home'>🏆 Top 50 Books</h2>", unsafe_allow_html=True)
     
@@ -193,9 +154,11 @@ if popular_df is not None:
             """, unsafe_allow_html=True)
 
 st.markdown("</div>", unsafe_allow_html=True)
+
+# ✅ Footer
 st.markdown("""
 <div class="footer">
-    <p>© 2025 Book Recommendation System | Made with ♥ using Flask & Bootstrap</p>
+    <p>© 2025 Book Recommendation System | Made with ♥ using Streamlit & Bootstrap</p>
     <p>
         <a href="mailto:nandini9107@gmail.com">📧 Contact Us</a> | 
         <a href="https://github.com/Nandini776" target="_blank">👨‍💻 GitHub</a> | 
@@ -203,6 +166,7 @@ st.markdown("""
     </p>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
