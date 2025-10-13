@@ -133,9 +133,9 @@ footer p {
   <!-- Main -->
   <div class="container mt-5">
     <h1 class="text-center">🌟 Top 50 Books</h1>
-    <div class="row g-4">
+    <div class="row mt-4">
       {% for i in range(book_name|length) %}
-      <div class="col-md-3 col-sm-6">
+      <div class="col-md-3 col-sm-4">
         <div class="card text-white">
           <img src="{{ image[i] }}" alt="{{ book_name[i] }}">
           <div class="card-body">
