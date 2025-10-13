@@ -11,6 +11,7 @@
       color: #f8f9fa;
       font-family: 'Poppins', sans-serif;
       overflow-x: hidden;
+      scroll-behavior: smooth;
     }
 
     /* Navbar */
@@ -166,11 +167,18 @@
     <p>
       📬 <a href="mailto:nandini9107@gmail.com">Contact Us</a> |
       🌐 <a href="https://github.com/Nandini776" target="_blank">GitHub</a> |
-      <a href="#">🔝 Back to Top</a>
+      <a href="#top" id="backToTop">🔝 Back to Top</a>
     </p>
   </footer>
 
   <script>
+    // Smooth Back to Top
+    document.getElementById('backToTop').addEventListener('click', (e) => {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // Book suggestions
     const input = document.getElementById('bookInput');
     const datalist = document.getElementById('book-list');
 
