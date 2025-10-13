@@ -18,7 +18,7 @@
             font-weight: bold;
         }
         .card {
-            background-color: #2d3748;
+            background-color: #FF0000;
             border: none;
             border-radius: 10px;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
