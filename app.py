@@ -1,7 +1,7 @@
-from flask import Flask, render_template,request
+import streamlit as st
 import pickle
 import numpy as np
-import pandas as pd
+import pandas as pd
 
 
 popular_df = pickle.load(open("popular.pkl", "rb"))
