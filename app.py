@@ -25,40 +25,84 @@ st.markdown("""
         color: white;
         background-color: #00796b;
     }
+    .book-details {
+        font-size: 0.9em;
+        line-height: 1.5;
+        margin-top: 10px;
+    }
+    .star-rating {
+        color: gold;
+        font-size: 1.1em;
+    }
     </style>
     """, unsafe_allow_html=True)
 
 @st.cache_data
 def load_data():
     try:
-        num_books = 20
-        data = {
-            'book_name': [f"Book Title {i+1}" for i in range(num_books)],
-            'author': [f"Author Name {i+1}" for i in range(num_books)],
-            'image': [
-                "https://placehold.co/150x200/2c3e50/ffffff?text=Book+Cover+1", 
-                "https://placehold.co/150x200/2c3e50/ffffff?text=Book+Cover+2",
-                "https://placehold.co/150x200/2c3e50/ffffff?text=Book+Cover+3",
-                "https://placehold.co/150x200/2c3e50/ffffff?text=Book+Cover+4"
-            ] * 5,
-            'votes': np.random.randint(100, 500, num_books),
-            'rating': np.round(np.random.uniform(3.5, 5.0, num_books), 2)
-        }
-        df = pd.DataFrame(data)
+        # Load the popular books data
+        popular_df = pickle.load(open('popular.pkl', 'rb'))
         
-        return df['book_name'].tolist(), df['author'].tolist(), df['image'].tolist(), df['votes'].tolist(), df['rating'].tolist()
+        # Extract lists for Top 50 Books display
+        book_name = popular_df['Book-Title'].tolist()
+        author = popular_df['Book-Author'].tolist()
+        image = popular_df['Image-URL-M'].tolist()
+        votes = popular_df['num_ratings'].tolist()
+        rating = popular_df['avg_rating'].tolist()
+        
+        # Load the main book data and the similarity matrix (needed for recommendations)
+        pt = pickle.load(open('pt.pkl', 'rb')) # Pivot table
+        books = pickle.load(open('books.pkl', 'rb')) # Books DataFrame
+        similarity_scores = pickle.load(open('similarity_score.pkl', 'rb'))
+        
+        return book_name, author, image, votes, rating, pt, books, similarity_scores
         
     except FileNotFoundError:
         st.error("Error: Could not find model or data files (.pkl). Please ensure they are in the same directory.")
-        return [], [], [], [], []
+        return [], [], [], [], [], None, None, None
 
-book_name, author, image, votes, rating = load_data()
+book_name, author, image, votes, rating, pt, books, similarity_scores = load_data()
 
 
 def recommend(book_title):
-    st.info(f"Generating recommendations for: {book_title}")
+    if pt is None or similarity_scores is None or books is None:
+        st.error("Recommendation data is not loaded. Please check your data files.")
+        return [], [], []
+
+    if book_title not in pt.index:
+        st.warning(f"Book '{book_title}' not found in the trained recommendation data.")
+        return [], [], []
+
+    # get index of the selected book
+    index = np.where(pt.index == book_title)[0][0]
+    # Calculate similarity scores and get top 5 (excluding the book itself)
+    similar_items = sorted(list(enumerate(similarity_scores[index])), key=lambda x: x[1], reverse=True)[1:6]
+
+    data = []
+    for i in similar_items:
+        item = []
+        temp_df = books[books['Book-Title'] == pt.index[i[0]]]
+        item.extend(list(temp_df.drop_duplicates('Book-Title')['Book-Title'].values))
+        item.extend(list(temp_df.drop_duplicates('Book-Title')['Book-Author'].values))
+        item.extend(list(temp_df.drop_duplicates('Book-Title')['Image-URL-M'].values))
+        
+        data.append(item)
     
-    return book_name[1:5], author[1:5], image[1:5]
+    # Process data list into separate lists for Streamlit display
+    rec_names = [d[0] for d in data]
+    rec_authors = [d[1] for d in data]
+    rec_images = [d[2] for d in data]
+    
+    return rec_names, rec_authors, rec_images
+
+
+# Helper function to create star rating display
+def get_star_rating(avg_rating):
+    # Convert numerical rating to a string of Unicode stars
+    stars_full = '★' * int(avg_rating)
+    stars_half = '½' if (avg_rating - int(avg_rating)) >= 0.5 else ''
+    stars_empty = '☆' * (5 - int(avg_rating) - (1 if stars_half else 0))
+    return f'<span class="star-rating">{stars_full}{stars_half}</span>{stars_empty} ({avg_rating:.2f})'
 
 
 tab1, tab2, tab3 = st.tabs(["📚 Top 50 Books (Home)", "✨ Get Recommendations", "📧 Contact Us"])
@@ -76,9 +120,15 @@ with tab1:
             
             st.image(image[i], width=150)
             
-            st.markdown(f"**Author:** {author[i]}")
-            st.markdown(f"**Votes:** {votes[i]}")
-            st.markdown(f"**Rating:** {rating[i]}")
+            # Use improved formatting with HTML/Markdown
+            st.markdown(f"""
+                <div class="book-details">
+                    **Author:** {author[i]}<br>
+                    **Votes:** {votes[i]}<br>
+                    **Rating:** {get_star_rating(rating[i])}
+                </div>
+            """, unsafe_allow_html=True)
+            
             st.markdown("---")
 
 with tab2:
@@ -94,7 +144,8 @@ with tab2:
         
         st.subheader(f"Recommendations for {selected_book}")
         
-        rec_cols = st.columns(len(recommended_books))
+        # Adjust columns based on the number of actual recommendations (up to 5)
+        rec_cols = st.columns(len(recommended_books) if recommended_books else 1) 
         
         for j in range(len(recommended_books)):
             with rec_cols[j]:
@@ -112,4 +163,5 @@ with tab3:
             <p><strong>Phone:</strong> +1-555-BOOK-REC</p>
         </div>
         """, unsafe_allow_html=True)
+
 
