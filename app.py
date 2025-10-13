@@ -11,20 +11,84 @@ st.set_page_config(
 
 st.markdown("""
     <style>
+    /* 1. Base Theme & Colors (Dark Mode) */
     .reportview-container .main {
         background-color: #1c1e20;
         color: #e0e0e0;
     }
-    h1 {
-        color: #00bcd4;
+    .stApp {
+        background-color: #1c1e20;
     }
-    h4 {
+    
+    /* 2. Typography and Titles */
+    h1 {
+        color: #00bcd4; /* Bright Teal for main titles */
+        font-weight: 700;
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    }
+    h2, h3, h4 {
         color: #e0e0e0;
     }
+    .st-emotion-cache-12fmw5g { /* Targets the internal style for Top 50 Books title */
+        color: #00bcd4 !important; 
+        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    }
+
+    /* 3. Buttons (Interactive Highlight) */
     .stButton>button {
         color: white;
-        background-color: #00796b;
+        background-color: #00a65a; /* Bright Green */
+        border: none;
+        border-radius: 8px;
+        padding: 10px 20px;
+        font-weight: bold;
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 10px rgba(0, 166, 90, 0.4);
     }
+    .stButton>button:hover {
+        background-color: #00796b; /* Slightly darker green on hover */
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(0, 166, 90, 0.6);
+    }
+
+    /* 4. Tab Styling (Interactive Navigation) */
+    .st-emotion-cache-1ftk8e { /* Targets the primary tab container */
+        background-color: #2c3e50; /* Darker blue for tab background */
+        border-radius: 10px;
+        padding: 5px 0;
+    }
+    .st-emotion-cache-1gjnqny { /* Targets active tab link/button */
+        color: #00bcd4; /* Teal for active text */
+        border-bottom: 2px solid #00bcd4;
+        font-weight: bold;
+    }
+    .st-emotion-cache-1gjnqny:hover {
+        color: #a7ffeb; /* Lighter teal on hover */
+    }
+
+
+    /* 5. Book Card Styling (Simulate Card Look) */
+    /* This targets the container holding each book in the grid */
+    .st-emotion-cache-ocqkz3 { /* Column container */
+        background-color: #282828;
+        padding: 15px;
+        border-radius: 12px;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        transition: all 0.3s ease;
+    }
+    .st-emotion-cache-ocqkz3:hover {
+        box-shadow: 0 6px 20px rgba(0, 188, 212, 0.3); /* Teal glow on hover */
+        transform: translateY(-4px);
+    }
+
+    /* Input/Select Box Styling */
+    .st-emotion-cache-4oy5x3 { /* Targets Selectbox input field */
+        background-color: #333;
+        color: white;
+        border-radius: 8px;
+    }
+    
     .book-details {
         font-size: 0.9em;
         line-height: 1.5;
@@ -154,6 +218,7 @@ with tab3:
             <p><strong>GitHub:</strong> <a href="https://github.com/Nandini776" style="color: #00bcd4;" target="_blank">https://github.com/Nandini776</a></p>
         </div>
         """, unsafe_allow_html=True)
+
 
 
 
