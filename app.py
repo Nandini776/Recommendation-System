@@ -31,30 +31,13 @@ st.markdown("""
     body {
         background-color: #0E1117;
     }
+    /* Remove padding from the main block container */
     .main .block-container {
         padding: 0;
     }
-    .navbar {
-        background-color: #1a202c;
-        padding: 1rem 2rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%;
-    }
-    .navbar h1 {
-        color: #48BB78;
-        margin: 0;
-        font-size: 1.5rem;
-    }
-    .navbar a {
-        color: white;
-        text-decoration: none;
-        margin-left: 1.5rem;
-        font-weight: 500;
-    }
-    .navbar a:hover {
-        color: #48BB78;
+    /* Adjust padding for Streamlit's main content area */
+    .st-emotion-cache-16txtl3 {
+        padding-top: 2rem;
     }
     .content-container {
         padding: 2rem 5%;
@@ -115,9 +98,40 @@ st.markdown("""
         color: #48BB78;
         text-decoration: none;
     }
+    .navbar {
+        background-color: #1a202c;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+    }
+    .navbar h1 {
+        color: #48BB78;
+        margin: 0;
+        font-size: 1.5rem;
+    }
+    .navbar a {
+        color: white;
+        text-decoration: none;
+        margin-left: 1.5rem;
+        font-weight: 500;
+    }
+    .navbar a:hover {
+        color: #48BB78;
+    }
+    .main-content-wrapper {
+        padding-top: 80px; /* Add padding to offset fixed navbar */
+    }
 </style>
 """, unsafe_allow_html=True)
 
+
+# --- Top Navigation Bar ---
 st.markdown("""
 <div class="navbar" id="top">
     <h1>📚 Book Recommendation System</h1>
@@ -128,8 +142,11 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-st.markdown('<div class="content-container">', unsafe_allow_html=True)
 
+# --- Main Content Area ---
+st.markdown('<div class="main-content-wrapper"><div class="content-container">', unsafe_allow_html=True)
+
+# --- Recommend Section ---
 if pt is not None:
     st.markdown("<h2 class='main-title' id='recommend'>📖 Recommend Books</h2>", unsafe_allow_html=True)
 
@@ -170,6 +187,7 @@ if pt is not None:
                     </div>
                     """, unsafe_allow_html=True)
 
+# --- Home Section (Top 50) ---
 if popular_df is not None:
     st.markdown("<h2 class='main-title' id='home'>🏆 Top 50 Books</h2>", unsafe_allow_html=True)
     
@@ -192,17 +210,22 @@ if popular_df is not None:
             </div>
             """, unsafe_allow_html=True)
 
-st.markdown("</div>", unsafe_allow_html=True)
+st.markdown("</div></div>", unsafe_allow_html=True)
+
+
+# --- Footer ---
 st.markdown("""
 <div class="footer">
     <p>© 2025 Book Recommendation System | Made with ♥ using Flask & Bootstrap</p>
     <p>
         <a href="mailto:nandini9107@gmail.com">📧 Contact Us</a> | 
-        <a href="https://github.com/Nandini776" target="_blank">👨‍💻 GitHub</a> | 
-        <a href="#top">⬆ Back to Top</a>
+        <a href="https://github.com/Nandini776" target="_blank">👨‍💻 GitHub</a> |
+        <a href="#top">⬆️ Back to Top</a>
     </p>
 </div>
 """, unsafe_allow_html=True)
+
+
 
 
 
