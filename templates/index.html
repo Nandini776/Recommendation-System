@@ -1,118 +1,167 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Top 50 Books</title>
-
+  <meta charset="UTF-8">
+  <title>Book Recommendation System</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     body {
-      background-color: #0a0a0a;
-      color: #ffffff;
-      font-family: "Poppins", sans-serif;
-      margin: 0;
-      padding: 0;
+      background: radial-gradient(circle at top, #0a0a0a, #121212);
+      color: #f8f9fa;
+      font-family: 'Poppins', sans-serif;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
     }
 
+    /* Navbar */
+    .navbar {
+      background: rgba(0, 166, 90, 0.15);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0, 255, 120, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .navbar-brand {
+      font-weight: 700;
+      font-size: 1.8rem;
+      color: #00ff99 !important;
+      letter-spacing: 1px;
+    }
+    .nav-link {
+      color: #e8e8e8 !important;
+      font-size: 1.05rem;
+      margin: 0 10px;
+      position: relative;
+      transition: 0.3s;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: #00ff99;
+      transition: width 0.3s;
+    }
+    .nav-link:hover::after,
+    .nav-link.active::after {
+      width: 100%;
+    }
+
+    /* Title */
     h1 {
-      text-align: center;
-      color: #00ff80;
-      margin-top: 40px;
+      background: linear-gradient(90deg, #00ff99, #00cc66);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
       font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
     }
 
-    .book-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 25px;
-      padding: 40px;
-      justify-items: center;
+    /* Cards */
+    .card {
+      height: 24rem;
+      border: none;
+      background: linear-gradient(145deg, #1a1a1a, #101010);
+      border-radius: 20px;
+      transition: all 0.4s ease;
     }
-
-    .book-item {
-      background-color: #1a1a1a;
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-      padding: 15px;
-      text-align: center;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      width: 200px;
+    .card:hover {
+      transform: translateY(-8px) scale(1.03);
+      box-shadow: 0 0 25px rgba(0, 255, 120, 0.2);
     }
-
-    .book-item:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.6);
-    }
-
-    /* FIXED IMAGE STYLE */
-    .book-cover-container {
-      width: 180px;
-      height: 270px;
-      background-color: #111;
-      display: flex;
-      justify-content: center;
+    .card img {
+      position: relative;
       align-items: center;
-      overflow: hidden;
-      border-radius: 10px;
-      margin: 0 auto 10px;
+      width: max-content;
+      left: 25%;
     }
-
-    .book-cover {
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
-    }
-
-    .book-title {
-      font-size: 1rem;
+    .card-body h4 {
+      font-size: 1.1rem;
       font-weight: 600;
-      color: #00ffcc;
-      margin-bottom: 5px;
+      color: #fff;
     }
-
-    .book-author {
+    .card-body p {
+      color: #ccc;
+      margin-bottom: 0.4rem;
       font-size: 0.9rem;
-      color: #bbbbbb;
-      margin-bottom: 8px;
     }
 
-    .book-rating {
-      font-size: 0.85rem;
-      color: #ffaa00;
+    /* Footer */
+    footer {
+      background: #0f0f0f;
+      border-top: 1px solid #222;
+      padding: 30px 0;
+      color: #aaa;
+      margin-top: 80px;
+      text-align: center;
     }
-
-    .book-votes {
-      font-size: 0.8rem;
-      color: #888;
+    footer a {
+      color: #00ff99;
+      text-decoration: none;
+      transition: 0.3s;
     }
-
-    @media (max-width: 480px) {
-      .book-item {
-        width: 90%;
-      }
+    footer a:hover {
+      color: #00cc70;
+      text-decoration: underline;
+    }
+    footer p {
+      margin: 5px 0;
     }
   </style>
 </head>
 <body>
-  <h1>🌟 Top 50 Books</h1>
 
-  <div class="book-grid">
-    {% for i in range(0, book_name|length) %}
-    <div class="book-item">
-      <div class="book-cover-container">
-        <img
-          src="{{ image[i] }}"
-          alt="{{ book_name[i] }}"
-          class="book-cover"
-        />
-      </div>
-      <div class="book-title">{{ book_name[i] }}</div>
-      <div class="book-author">{{ author[i] }}</div>
-      <div class="book-rating">⭐ {{ rating[i]|round(2) }}</div>
-      <div class="book-votes">{{ votes[i] }} votes</div>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark px-4">
+    <a class="navbar-brand" href="/">📚 Book Recommendation System</a>
+    <div class="ms-auto d-flex align-items-center">
+      <a href="/" class="nav-link active">Home</a>
+      <a href="/recommend" class="nav-link">Recommend</a>
     </div>
-    {% endfor %}
+  </nav>
+
+  <!-- Main -->
+  <div class="container mt-5">
+    <h1 class="text-center">🌟 Top 50 Books</h1>
+    <div class="row mt-4">
+      {% for i in range(book_name|length) %}
+      <div class="col-md-3 col-sm-4 mb-4">
+        <div class="card text-white">
+          <img src="{{ image[i] }}" alt="{{ book_name[i] }}">
+          <div class="card-body">
+            <h4>{{ book_name[i] }}</h4>
+            <p><strong>Author:</strong> {{ author[i] }}</p>
+            <p><strong>Votes:</strong> {{ votes[i] }}</p>
+            <p><strong>Rating:</strong> ⭐ {{ rating[i]|round(2) }}</p>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
   </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2025 Book Recommendation System | Made with ❤ using Flask & Bootstrap</p>
+    <p>
+      📬 <a href="mailto:nandini9107@gmail.com">Contact Us</a> |
+      🌐 <a href="https://github.com/Nandini776" target="_blank">GitHub</a> |
+      <a href="#top" id="backToTop">🔝 Back to Top</a>
+    </p>
+  </footer>
+
+  <!-- Smooth Scroll Script -->
+  <script>
+    document.getElementById('backToTop').addEventListener('click', (e) => {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+
 </body>
 </html>
 
