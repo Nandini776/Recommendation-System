@@ -10,7 +10,7 @@ books=pickle.load(open('books.pkl','rb'))
 similarity_score=pickle.load(open('similarity_score.pkl','rb'))
 
 
-app = Flask(__name__)  # ✅ FIXED LINE
+app = Flask(_name_)  # ✅ FIXED LINE
 
 @app.route('/')
 def index():
@@ -60,5 +60,5 @@ def recommend():
     return render_template('recommend.html',data=data)
 
 
-if __name__ == '__main__':
+if _name_ == '_main_':
     app.run(debug=True)
