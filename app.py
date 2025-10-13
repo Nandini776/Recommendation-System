@@ -23,8 +23,9 @@ def index():
     return render_template(
         'index.html',
         book_name=list(hd_popular_df['Book-Title'].values),
-        author=list(hd_popular_df['Book-Author'].values),
-        image=hd_images,  # Send the new HD image links to the template
+        # --- THIS IS THE FIXED LINE ---
+        author=list(hd_popular_df['Book-Author_x'].values), # Use the correct column name after merge
+        image=hd_images,
         votes=list(hd_popular_df['num_ratings'].values),
         rating=list(hd_popular_df['avg_rating'].values)
     )
@@ -75,6 +76,8 @@ def recommend():
 # Corrected syntax for the main execution block
 if __name__ == '__main__':
     app.run(debug=True)
+
+
 
 
 
