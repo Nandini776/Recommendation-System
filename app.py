@@ -25,13 +25,20 @@ st.markdown("""
         color: #00bcd4; /* Bright Teal for main titles */
         font-weight: 700;
         text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+        margin: 0; /* Remove default margin for header alignment */
     }
     h2, h3, h4 {
         color: #e0e0e0;
     }
-    .st-emotion-cache-12fmw5g { /* Targets the internal style for Top 50 Books title */
-        color: #00bcd4 !important; 
-        text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    /* Custom Green and Centering for Tab Titles like "Top 50 Books" */
+    .centered-green-title {
+        text-align: center;
+        color: #00a65a !important; /* Bright Green */
+        font-size: 2.5em; /* Large size */
+        font-weight: 800;
+        margin-top: 20px;
+        margin-bottom: 30px;
+        text-shadow: 1px 1px 5px rgba(0, 166, 90, 0.5);
     }
 
     /* 3. Buttons (Interactive Highlight) */
@@ -57,18 +64,34 @@ st.markdown("""
         border-radius: 10px;
         padding: 5px 0;
     }
-    .st-emotion-cache-1gjnqny { /* Targets active tab link/button */
-        color: #00bcd4; /* Teal for active text */
+    /* Making tabs appear on the right side by overriding Streamlit's default container behavior */
+    .stTabs [data-baseweb="tab-list"] {
+        display: flex;
+        justify-content: flex-end; /* Push tabs to the right */
+        gap: 10px; /* Space between tabs */
+        width: 100%;
+        margin-top: 10px;
+        background-color: #1c1e20; /* Match background */
+    }
+    /* Style for the active tab */
+    button[data-baseweb="tab"][aria-selected="true"] {
+        color: #00bcd4 !important; /* Teal for active text */
         border-bottom: 2px solid #00bcd4;
         font-weight: bold;
+        background-color: #2c3e50;
+        border-radius: 5px 5px 0 0;
     }
-    .st-emotion-cache-1gjnqny:hover {
-        color: #a7ffeb; /* Lighter teal on hover */
+    /* Style for inactive tabs */
+    button[data-baseweb="tab"][aria-selected="false"] {
+        color: #e0e0e0 !important;
+        background-color: #2c3e50;
+        border-radius: 5px 5px 0 0;
     }
-
-
+    button[data-baseweb="tab"]:hover {
+        color: #a7ffeb !important;
+    }
+    
     /* 5. Book Card Styling (Simulate Card Look) */
-    /* This targets the container holding each book in the grid */
     .st-emotion-cache-ocqkz3 { /* Column container */
         background-color: #282828;
         padding: 15px;
@@ -98,10 +121,12 @@ st.markdown("""
         color: gold;
         font-size: 1.1em;
     }
+    /* Ensure the main content stays below the new header structure */
+    .block-container {
+        padding-top: 0 !important; 
+    }
     </style>
     """, unsafe_allow_html=True)
-
-st.title("Book Recommendation System")
 
 @st.cache_data
 def load_data():
@@ -162,11 +187,20 @@ def get_star_rating(avg_rating):
     stars_empty = '☆' * (5 - int(avg_rating) - (1 if stars_half else 0))
     return f'<span class="star-rating">{stars_full}{stars_half}</span>{stars_empty} ({avg_rating:.2f})'
 
+# NEW HEADER STRUCTURE: Title Left, Tabs Right
+header_col1, header_col2 = st.columns([3, 1])
 
-tab1, tab2, tab3 = st.tabs(["📚 Top 50 Books (Home)", "✨ Get Recommendations", "📧 Contact Us"])
+with header_col1:
+    st.title("Book Recommendation System")
+
+# Place the st.tabs object in the second column to push it to the right
+with header_col2:
+    tab1, tab2, tab3 = st.tabs(["Home", "Recommend", "Contact Us"]) # Renamed tabs for simplicity in the header
+
 
 with tab1:
-    st.title("Top 50 Books")
+    # Centered Green Title
+    st.markdown("<h2 class='centered-green-title'>Top 50 Books</h2>", unsafe_allow_html=True)
     
     cols = st.columns(4) 
     
@@ -189,7 +223,7 @@ with tab1:
             st.markdown("---")
 
 with tab2:
-    st.title("Book Recommendation Engine")
+    st.markdown("<h2 class='centered-green-title'>Book Recommendation Engine</h2>", unsafe_allow_html=True)
     
     selected_book = st.selectbox(
         "Select a book to get personalized recommendations:",
@@ -210,14 +244,19 @@ with tab2:
                 st.caption(f"by {recommended_authors[j]}")
 
 with tab3:
-    st.title("Contact Us")
+    st.markdown("<h2 class='centered-green-title'>Contact Us</h2>", unsafe_allow_html=True)
     st.write("Thank you for using the Book Recommender system. For inquiries, technical support, or feedback, please reach out.")
-    st.markdown(f"""
-        <div style="padding: 20px; background-color: #2c3e50; border-radius: 10px;">
-            <p><strong>Email:</strong> <a href="mailto:nandini9107@gmail.com" style="color: #00bcd4;">nandini9107@gmail.com</a></p>
-            <p><strong>GitHub:</strong> <a href="https://github.com/Nandini776" style="color: #00bcd4;" target="_blank">https://github.com/Nandini776</a></p>
+    
+    # Contact content centered in a container
+    st.markdown("""
+        <div style="text-align: center; max-width: 600px; margin: 0 auto;">
+            <div style="padding: 20px; background-color: #2c3e50; border-radius: 10px;">
+                <p><strong>Email:</strong> <a href="mailto:nandini9107@gmail.com" style="color: #00bcd4;">nandini9107@gmail.com</a></p>
+                <p><strong>GitHub:</strong> <a href="https://github.com/Nandini776" style="color: #00bcd4;" target="_blank">https://github.com/Nandini776</a></p>
+            </div>
         </div>
         """, unsafe_allow_html=True)
+
 
 
 
