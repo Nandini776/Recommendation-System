@@ -1,64 +1,115 @@
 import streamlit as st
+import pandas as pd
 import pickle
 import numpy as np
-import pandas as pd
+
+st.set_page_config(
+    page_title="Book Recommender System",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
+st.markdown("""
+    <style>
+    .reportview-container .main {
+        background-color: #1c1e20;
+        color: #e0e0e0;
+    }
+    h1 {
+        color: #00bcd4;
+    }
+    h4 {
+        color: #e0e0e0;
+    }
+    .stButton>button {
+        color: white;
+        background-color: #00796b;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+@st.cache_data
+def load_data():
+    try:
+        num_books = 20
+        data = {
+            'book_name': [f"Book Title {i+1}" for i in range(num_books)],
+            'author': [f"Author Name {i+1}" for i in range(num_books)],
+            'image': [
+                "https://placehold.co/150x200/2c3e50/ffffff?text=Book+Cover+1", 
+                "https://placehold.co/150x200/2c3e50/ffffff?text=Book+Cover+2",
+                "https://placehold.co/150x200/2c3e50/ffffff?text=Book+Cover+3",
+                "https://placehold.co/150x200/2c3e50/ffffff?text=Book+Cover+4"
+            ] * 5,
+            'votes': np.random.randint(100, 500, num_books),
+            'rating': np.round(np.random.uniform(3.5, 5.0, num_books), 2)
+        }
+        df = pd.DataFrame(data)
+        
+        return df['book_name'].tolist(), df['author'].tolist(), df['image'].tolist(), df['votes'].tolist(), df['rating'].tolist()
+        
+    except FileNotFoundError:
+        st.error("Error: Could not find model or data files (.pkl). Please ensure they are in the same directory.")
+        return [], [], [], [], []
+
+book_name, author, image, votes, rating = load_data()
 
 
-popular_df = pickle.load(open("popular.pkl", "rb"))
-pt=pickle.load(open('pt.pkl','rb'))
-books=pickle.load(open('books.pkl','rb'))
-similarity_score=pickle.load(open('similarity_score.pkl','rb'))
+def recommend(book_title):
+    st.info(f"Generating recommendations for: {book_title}")
+    
+    return book_name[1:5], author[1:5], image[1:5]
 
 
-app = Flask(_name_)  # ✅ FIXED LINE
+tab1, tab2, tab3 = st.tabs(["📚 Top 50 Books (Home)", "✨ Get Recommendations", "📧 Contact Us"])
 
-@app.route('/')
-def index():
-    return render_template(
-        'index.html',
-        book_name=list(popular_df['Book-Title'].values),
-        author=list(popular_df['Book-Author'].values),
-        image=list(popular_df['Image-URL-M'].values),
-        votes=list(popular_df['num_ratings'].values),
-        rating=list(popular_df['avg_rating'].values)
+with tab1:
+    st.title("Top 50 Books")
+    
+    cols = st.columns(4) 
+    
+    for i in range(len(book_name)):
+        col_index = i % 4
+        
+        with cols[col_index]:
+            st.markdown(f"**<h4 style='color:#00bcd4;'>{book_name[i]}</h4>**", unsafe_allow_html=True)
+            
+            st.image(image[i], width=150)
+            
+            st.markdown(f"**Author:** {author[i]}")
+            st.markdown(f"**Votes:** {votes[i]}")
+            st.markdown(f"**Rating:** {rating[i]}")
+            st.markdown("---")
+
+with tab2:
+    st.title("Book Recommendation Engine")
+    
+    selected_book = st.selectbox(
+        "Select a book to get personalized recommendations:",
+        book_name
     )
-@app.route("/recommend")
-def recommend_ui():
-    # Make sure book_name is defined here
-    book_name = [...]  # your list of book names
-    return render_template("recommend.html", book_name=list(pt.index))
 
-# ✅ New route for AJAX-based book suggestions
-@app.route('/get_book_suggestions')
-def get_book_suggestions():
-    query = request.args.get('q', '').lower()
-    matches = [book for book in pt.index if query in book.lower()]
-    return {'books': matches[:10]}  # Return top 10 suggestions
+    if st.button("Show Recommendations"):
+        recommended_books, recommended_authors, recommended_images = recommend(selected_book)
+        
+        st.subheader(f"Recommendations for {selected_book}")
+        
+        rec_cols = st.columns(len(recommended_books))
+        
+        for j in range(len(recommended_books)):
+            with rec_cols[j]:
+                st.image(recommended_images[j], width=120)
+                st.markdown(f"**{recommended_books[j]}**")
+                st.caption(f"by {recommended_authors[j]}")
 
-@app.route('/recommend_books',methods=['POST'])
-def recommend():
-    user_input = request.form.get('user_input')
-    matches = [book for book in pt.index if user_input.lower() in book.lower()]
-    if not matches:
-        return render_template('recommend.html', data=None, error="Book not found")
+with tab3:
+    st.title("Contact Us")
+    st.write("Thank you for using the My Book Recommender system. For inquiries, technical support, or feedback, please reach out.")
+    st.markdown("""
+        <div style="padding: 20px; background-color: #2c3e50; border-radius: 10px;">
+            <p><strong>Email:</strong> support@bookrecommender.com</p>
+            <p><strong>GitHub:</strong> [Link to your GitHub Repo]</p>
+            <p><strong>Phone:</strong> +1-555-BOOK-REC</p>
+        </div>
+        """, unsafe_allow_html=True)
 
-    # Use the first matching book title
-    user_input = matches[0]
-    index = np.where(pt.index == user_input)[0][0]
-    similar_items = sorted(list(enumerate(similarity_score[index])), key=lambda x: x[1], reverse=True)[1:6]
-
-    data = []
-    for i in similar_items:
-        item = []
-        temp_df = (books[books['Book-Title'] == pt.index[i[0]]])
-        item.extend(list(temp_df.drop_duplicates('Book-Title')['Book-Title'].values))
-        item.extend(list(temp_df.drop_duplicates('Book-Title')['Book-Author'].values))
-        item.extend(list(temp_df.drop_duplicates('Book-Title')['Image-URL-M'].values))
-        data.append(item)
-
-        print(data)
-    return render_template('recommend.html',data=data)
-
-
-if _name_ == '_main_':
-    app.run(debug=True)
