@@ -25,6 +25,9 @@ st.set_page_config(
 
 st.markdown("""
 <style>
+    html {
+        scroll-behavior: smooth;
+    }
     body {
         background-color: #0E1117;
     }
@@ -119,8 +122,8 @@ st.markdown("""
 <div class="navbar" id="top">
     <h1>📚 Book Recommendation System</h1>
     <div>
-        <a href="#">Home</a>
-        <a href="#">Recommend</a>
+        <a href="#home">Home</a>
+        <a href="#recommend">Recommend</a>
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -128,7 +131,7 @@ st.markdown("""
 st.markdown('<div class="content-container">', unsafe_allow_html=True)
 
 if pt is not None:
-    st.markdown("<h2 class='main-title'>📖 Recommend Books</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 class='main-title' id='recommend'>📖 Recommend Books</h2>", unsafe_allow_html=True)
 
     selected_book_name = st.selectbox(
         "Type or select a book to get recommendations",
@@ -163,7 +166,7 @@ if pt is not None:
                 """, unsafe_allow_html=True)
 
 if popular_df is not None:
-    st.markdown("<h2 class='main-title'>🏆 Top 50 Books</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 class='main-title' id='home'>🏆 Top 50 Books</h2>", unsafe_allow_html=True)
     
     num_columns = 5
     cols = st.columns(num_columns)
@@ -195,6 +198,8 @@ st.markdown("""
     </p>
 </div>
 """, unsafe_allow_html=True)
+
+
 
 
 
