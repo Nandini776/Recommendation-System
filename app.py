@@ -37,7 +37,7 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-st.title("My Book Recommender System")
+st.title("Book Recommendation System")
 
 @st.cache_data
 def load_data():
@@ -147,14 +147,14 @@ with tab2:
 
 with tab3:
     st.title("Contact Us")
-    st.write("Thank you for using the My Book Recommender system. For inquiries, technical support, or feedback, please reach out.")
+    st.write("Thank you for using the Book Recommender system. For inquiries, technical support, or feedback, please reach out.")
     st.markdown(f"""
         <div style="padding: 20px; background-color: #2c3e50; border-radius: 10px;">
             <p><strong>Email:</strong> <a href="mailto:nandini9107@gmail.com" style="color: #00bcd4;">nandini9107@gmail.com</a></p>
             <p><strong>GitHub:</strong> <a href="https://github.com/Nandini776" style="color: #00bcd4;" target="_blank">https://github.com/Nandini776</a></p>
-            <p><strong>Phone:</strong> +1-555-BOOK-REC</p>
         </div>
         """, unsafe_allow_html=True)
+
 
 
 
