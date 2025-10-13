@@ -63,31 +63,47 @@
 
     /* Cards */
     .card {
-      height: 24rem;
       border: none;
       background: linear-gradient(145deg, #1a1a1a, #101010);
       border-radius: 20px;
       transition: all 0.4s ease;
+      height: 26rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      overflow: hidden;
     }
     .card:hover {
       transform: translateY(-8px) scale(1.03);
       box-shadow: 0 0 25px rgba(0, 255, 120, 0.2);
     }
+
     .card img {
-      position: relative;
-      align-items: center;
-      width: max-content;
-      left: 25%;
+      width: 150px;
+      height: 210px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-top: 20px;
+      display: block;
+      box-shadow: 0 0 15px rgba(0, 255, 120, 0.1);
     }
+
+    .card-body {
+      text-align: center;
+      padding: 15px;
+    }
+
     .card-body h4 {
-      font-size: 1.1rem;
+      font-size: 1rem;
       font-weight: 600;
       color: #fff;
+      margin-bottom: 5px;
     }
     .card-body p {
       color: #ccc;
       margin-bottom: 0.4rem;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
     }
 
     /* Footer */
