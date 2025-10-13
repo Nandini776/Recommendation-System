@@ -116,7 +116,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.markdown("""
-<div class="navbar">
+<div class="navbar" id="top">
     <h1>📚 Book Recommendation System</h1>
     <div>
         <a href="#">Home</a>
@@ -189,12 +189,14 @@ st.markdown("""
 <div class="footer">
     <p>© 2025 Book Recommendation System | Made with ♥ using Flask & Bootstrap</p>
     <p>
-        <a href="#">📧 Contact Us</a> | 
-        <a href="#">👨‍💻 GitHub</a> | 
-        <a href="#">⬆️ Back to Top</a>
+        <a href="mailto:nandini9107@gmail.com">📧 Contact Us</a> | 
+        <a href="https://github.com/Nandini776" target="_blank">👨‍💻 GitHub</a> | 
+        <a href="#top">⬆️ Back to Top</a>
     </p>
 </div>
 """, unsafe_allow_html=True)
+
+
 
 
 
