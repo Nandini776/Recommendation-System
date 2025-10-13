@@ -1,214 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Book Recommender - Recommend</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    body {
-      background: radial-gradient(circle at top, #0a0a0a, #121212);
-      color: #f8f9fa;
-      font-family: 'Poppins', sans-serif;
-      overflow-x: hidden;
-    }
-
-    .navbar {
-      background: rgba(0, 166, 90, 0.15);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(0, 255, 120, 0.1);
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-    }
-    .navbar-brand {
-      font-weight: 700;
-      font-size: 1.8rem;
-      color: #00ff99 !important;
-    }
-    .nav-link {
-      color: #e8e8e8 !important;
-      font-size: 1.05rem;
-      margin: 0 10px;
-      position: relative;
-      transition: 0.3s;
-    }
-    .nav-link::after {
-      content: '';
-      position: absolute;
-      bottom: -4px;
-      left: 0;
-      width: 0;
-      height: 2px;
-      background-color: #00ff99;
-      transition: width 0.3s;
-    }
-    .nav-link:hover::after,
-    .nav-link.active::after {
-      width: 100%;
-    }
-
-    .search-box {
-      background-color: #1a1a1a;
-      border-radius: 15px;
-      padding: 30px;
-      margin-top: 60px;
-      box-shadow: 0 0 25px rgba(0, 255, 120, 0.1);
-    }
-    .search-box input {
-      width: 100%;
-      padding: 14px;
-      border: none;
-      border-radius: 8px;
-      outline: none;
-      font-size: 1rem;
-      background-color: #2a2a2a;
-      color: #fff;
-    }
-    .btn-custom {
-      background-color: #00ff99;
-      color: #000;
-      font-weight: 600;
-      border: none;
-      border-radius: 8px;
-      padding: 12px 25px;
-      transition: 0.3s;
-    }
-    .btn-custom:hover {
-      background-color: #00cc70;
-      transform: scale(1.05);
-    }
-
-    .card {
-      border: none;
-      background: linear-gradient(145deg, #1a1a1a, #101010);
-      border-radius: 20px;
-      transition: all 0.4s ease;
-    }
-    .card:hover {
-      transform: translateY(-8px) scale(1.03);
-      box-shadow: 0 0 25px rgba(0, 255, 120, 0.2);
-    }
-    .card img {
-      border-radius: 20px 20px 0 0;
-      height: 260px;
-      object-fit: cover;
-      transition: 0.3s;
-    }
-    .card:hover img {
-      opacity: 0.85;
-    }
-    .card-body h4 {
-      font-size: 1.05rem;
-      font-weight: 700;
-    }
-    .card-body p {
-      font-size: 0.9rem;
-      color: #ccc;
-    }
-
-footer {
-  background: #0f0f0f;
-  border-top: 1px solid #222;
-  padding: 30px 0;
-  color: #aaa;
-  margin-top: 80px;
-  text-align: center;
-}
-footer a {
-  color: #00ff99;
-  text-decoration: none;
-  transition: 0.3s;
-}
-footer a:hover {
-  color: #00cc70;
-  text-decoration: underline;
-}
-footer p {
-  margin: 5px 0;
-}
-  </style>
+    <meta charset="UTF-8">
+    <title>Book Recommender System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .text-white {
+            color: white;
+        }
+    </style>
 </head>
-<body>
-
-  <nav class="navbar navbar-expand-lg navbar-dark px-4">
-    <a class="navbar-brand" href="/">📚 Book Recommendation System</a>
-    <div class="ms-auto d-flex align-items-center">
-      <a href="/" class="nav-link">Home</a>
-      <a href="/recommend" class="nav-link active">Recommend</a>
-    </div>
-  </nav>
-
-  <div class="container text-center">
-    <div class="search-box mx-auto col-md-8">
-      <form action="/recommend_books" method="post" autocomplete="off">
-        <input name="user_input" id="bookInput" class="form-control" placeholder="🔍 Type a book name..."
-               list="book-list" autocomplete="off" autocorrect="off" spellcheck="false"><br>
-        <datalist id="book-list">
-          {% for book in book_name %}
-            <option value="{{ book }}">
-          {% endfor %}
-        </datalist>
-        <button type="submit" class="btn btn-custom mt-3">Get Recommendations</button>
-      </form>
-    </div>
-
-    {% if error %}
-      <p class="text-danger mt-4">{{ error }}</p>
-    {% endif %}
-
-    {% if data %}
-    <h2 class="mt-5 mb-4">📖 Recommended Books</h2>
-    <div class="row g-4">
-      {% for i in data %}
-      <div class="col-md-3 col-sm-6">
-        <div class="card text-white">
-          <img src="{{ i[2] }}" alt="{{ i[0] }}">
-          <div class="card-body">
-            <h4>{{ i[0] }}</h4>
-            <p><strong>Author:</strong> {{ i[1] }}</p>
-          </div>
+<body style="background-color:black">
+     <nav class="navbar" style="background-color:#00a65a">
+        <div class="container-fluid">
+            <p class="navbar-brand text white" style="font-size: 2rem; font-weight: bold;">My Book Recommender</p>
+            <ul class="nav navbar-nav">
+                <li class="nav item"><a class="nav-link text-white" href="/" style="font-size: 1.25rem;" >Home</a></li>
+                <li class="nav item"><a class="nav-link text-white"href="/recommend" style="font-size: 1.25rem;">Recommend</a></li>
+                <li class="nav item"><a class="nav-link text-white" href="#" style="font-size: 1.25rem;">Contact</a></li>
+            </ul>
         </div>
-      </div>
-      {% endfor %}
+    </nav>
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="text-white">Recommend Books</h1>
+            </div>
+        </div>
+            <form action="/recommend_books" method="post">
+            <input name="user_input" id="bookInput" class="form-control" placeholder="Type a book name..." list="book-list" autocomplete="off"><br>
+
+            <datalist id="book-list">
+                <!-- This will be populated dynamically via JS -->
+                {% for book in book_name %}
+                    <option value="{{ book }}">
+                {% endfor %}
+            </datalist>
+
+            <button type="submit" class="btn btn-lg btn-warning">Submit</button>
+        </form>
+
+        {% if error %}
+            <div class="alert alert-danger mt-3" role="alert">
+                {{ error }}
+            </div>
+        {% endif %}
+        {% if data %}
+        <div class="row mt-4">
+            {% for book in data %}
+            <div class="col-md-2 mb-4">
+                <div class="card bg-dark text-white h-100" style="height: 400px;">
+                   <img src="{{book[2]}}" class="card-img-top mx-auto d-block" alt="{{ book.title }}" style="width: 150px; height: auto; object-fit: cover;">
+
+                    <div class="card-body">
+                        <h4 class="card-title" style="font-size: 1rem;">{{ book[0]}}</h4>
+                        <h6 class="card-text" style="font-size: 0.8rem;">{{ book[1] }}</h6>
+                    </div>
+                </div>
+            </div>
+
+            {% endfor %}
+        </div>
+        {% endif %}
     </div>
-    {% endif %}
-  </div>
+    <script>
+        const input = document.getElementById('bookInput');
+        const datalist = document.getElementById('book-list');
 
-  <footer>
-    <p>© 2025 My Book Recommender | Explore your next favorite read 📘</p>
-    <p>
-      <a href="mailto:contact@mybookrecommender.com">📬 Contact Us</a> |
-      🌐 <a href="https://github.com/Nandini776" target="_blank">GitHub</a> |
-      <a href="#">🔝 Back to Top</a>
-    </p>
-  </footer>
+        input.addEventListener('input', () => {
+            const query = input.value;
 
-  <script>
-    const input = document.getElementById('bookInput');
-    const datalist = document.getElementById('book-list');
+            if (query.length < 2) {
+                datalist.innerHTML = '';
+                return;
+            }
 
-    input.addEventListener('input', () => {
-      const query = input.value;
+            fetch(/get_book_suggestions?q=${encodeURIComponent(query)})
+                .then(response => response.json())
+                .then(data => {
+                    datalist.innerHTML = ''; // clear existing options
+                    data.books.forEach(book => {
+                        const option = document.createElement('option');
+                        option.value = book;
+                        datalist.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching suggestions:', error));
+        });
+    </script>
 
-      if (query.length < 2) {
-        datalist.innerHTML = '';
-        return;
-      }
 
-      fetch(/get_book_suggestions?q=${encodeURIComponent(query)})
-        .then(response => response.json())
-        .then(data => {
-          datalist.innerHTML = '';
-          data.books.forEach(book => {
-            const option = document.createElement('option');
-            option.value = book;
-            datalist.appendChild(option);
-          });
-        })
-        .catch(error => console.error('Error fetching suggestions:', error));
-    });
-  </script>
+
+
 
 </body>
 </html>
