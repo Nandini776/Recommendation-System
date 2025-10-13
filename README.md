@@ -1,1 +1,1 @@
-https://book-recommendation-system-1-qb0r.onrender.com
+https://book-recommendation-system-001.onrender.com/
