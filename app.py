@@ -4,31 +4,48 @@ import numpy as np
 import pandas as pd
 import requests
 
+# -----------------------------
+# Load data
+# -----------------------------
 popular_df = pickle.load(open("popular.pkl", "rb"))
 pt = pickle.load(open("pt.pkl", "rb"))
 books = pickle.load(open("books.pkl", "rb"))
 similarity_score = pickle.load(open("similarity_score.pkl", "rb"))
 
-app = Flask(__name__)
+app = Flask(_name_)
 
-def get_high_quality_cover(title):
+# -----------------------------
+# Google Books Cover Helper
+# -----------------------------
+GOOGLE_BOOKS_API_KEY = "YOUR_API_KEY"  # 🔹 Replace with your real key
+
+
+def get_google_books_cover(title):
+    """Fetch a high-resolution cover image using Google Books API."""
     try:
-        url = f"https://openlibrary.org/search.json?title={title}"
+        url = f"https://www.googleapis.com/books/v1/volumes?q=intitle:{title}&key={GOOGLE_BOOKS_API_KEY}"
         res = requests.get(url, timeout=5).json()
-        if res.get("docs"):
-            cover_id = res["docs"][0].get("cover_i")
-            if cover_id:
-                return f"https://covers.openlibrary.org/b/id/{cover_id}-L.jpg"
+        if "items" in res and len(res["items"]) > 0:
+            image_links = res["items"][0]["volumeInfo"].get("imageLinks", {})
+            # Prefer large, then medium, then thumbnail
+            for size in ["large", "medium", "small", "thumbnail"]:
+                if size in image_links:
+                    return image_links[size].replace("http:", "https:")
     except Exception:
         pass
     return None
 
+
+# -----------------------------
+# Routes
+# -----------------------------
 @app.route('/')
 def index():
     high_quality_images = []
     for title, img_url in zip(popular_df['Book-Title'], popular_df['Image-URL-M']):
-        cover_url = get_high_quality_cover(title)
+        cover_url = get_google_books_cover(title)
         high_quality_images.append(cover_url if cover_url else img_url)
+
     return render_template(
         'index.html',
         book_name=list(popular_df['Book-Title'].values),
@@ -38,9 +55,11 @@ def index():
         rating=list(popular_df['avg_rating'].values)
     )
 
+
 @app.route("/recommend")
 def recommend_ui():
     return render_template("recommend.html", book_name=list(pt.index))
+
 
 @app.route('/get_book_suggestions')
 def get_book_suggestions():
@@ -48,29 +67,39 @@ def get_book_suggestions():
     matches = [book for book in pt.index if query in book.lower()]
     return {'books': matches[:10]}
 
+
 @app.route('/recommend_books', methods=['POST'])
 def recommend():
     user_input = request.form.get('user_input')
     matches = [book for book in pt.index if user_input.lower() in book.lower()]
+
     if not matches:
         return render_template('recommend.html', data=None, error="Book not found")
+
     user_input = matches[0]
     index = np.where(pt.index == user_input)[0][0]
-    similar_items = sorted(list(enumerate(similarity_score[index])), key=lambda x: x[1], reverse=True)[1:5]
+    similar_items = sorted(list(enumerate(similarity_score[index])),
+                           key=lambda x: x[1], reverse=True)[1:5]
+
     data = []
     for i in similar_items:
         item = []
         temp_df = books[books['Book-Title'] == pt.index[i[0]]]
+
         title = list(temp_df.drop_duplicates('Book-Title')['Book-Title'].values)[0]
         author = list(temp_df.drop_duplicates('Book-Title')['Book-Author'].values)[0]
-        cover_url = get_high_quality_cover(title)
+
+        cover_url = get_google_books_cover(title)
         if not cover_url:
             cover_url = list(temp_df.drop_duplicates('Book-Title')['Image-URL-M'].values)[0]
+
         item.extend([title, author, cover_url])
         data.append(item)
+
     return render_template('recommend.html', data=data)
 
-if __name__ == '__main__':
+
+if _name_ == '_main_':
     app.run(debug=True)
 
 
