@@ -46,7 +46,7 @@ st.markdown("""
     }
     .main-title {
         text-align: center;
-        color: white;
+        color: #48BB78;
         font-size: 3rem;
         font-weight: 700;
         margin-bottom: 1rem;
@@ -260,6 +260,8 @@ st.markdown("""
     </p>
 </div>
 """, unsafe_allow_html=True)
+
+
 
 
 
