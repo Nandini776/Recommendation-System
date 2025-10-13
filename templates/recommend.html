@@ -185,30 +185,36 @@ footer p {
   </footer>
 
   <script>
-    const input = document.getElementById('bookInput');
-    const datalist = document.getElementById('book-list');
+  const input = document.getElementById('bookInput');
+  const datalist = document.getElementById('book-list');
 
-    input.addEventListener('input', () => {
-      const query = input.value;
-
-      if (query.length < 2) {
+  // Fetch and show suggestions (all or filtered)
+  function fetchSuggestions(query = '') {
+    fetch(/get_book_suggestions?q=${encodeURIComponent(query)})
+      .then(response => response.json())
+      .then(data => {
         datalist.innerHTML = '';
-        return;
-      }
+        data.books.forEach(book => {
+          const option = document.createElement('option');
+          option.value = book;
+          datalist.appendChild(option);
+        });
+      })
+      .catch(error => console.error('Error fetching suggestions:', error));
+  }
 
-      fetch(/get_book_suggestions?q=${encodeURIComponent(query)})
-        .then(response => response.json())
-        .then(data => {
-          datalist.innerHTML = '';
-          data.books.forEach(book => {
-            const option = document.createElement('option');
-            option.value = book;
-            datalist.appendChild(option);
-          });
-        })
-        .catch(error => console.error('Error fetching suggestions:', error));
-    });
-  </script>
+  // When user types — fetch matching suggestions
+  input.addEventListener('input', () => {
+    const query = input.value.trim();
+    fetchSuggestions(query);
+  });
+
+  // When user focuses (clicks) — show all books
+  input.addEventListener('focus', () => {
+    fetchSuggestions(''); // Empty query → backend should return all book names
+  });
+</script>
+    
 
 </body>
 </html>
