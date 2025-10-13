@@ -25,64 +25,52 @@ st.set_page_config(
 
 st.markdown("""
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
+    
     html {
         scroll-behavior: smooth;
     }
     body {
-        background-color: #0E1117;
+        font-family: 'Montserrat', sans-serif;
+        background: linear-gradient(to right, #0E1117, #1a202c);
+        color: #fff;
     }
     .main .block-container {
         padding: 0;
     }
-    .navbar {
-        background-color: #1a202c;
-        padding: 1rem 2rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%;
-    }
-    .navbar h1 {
-        color: #48BB78;
-        margin: 0;
-        font-size: 1.5rem;
-    }
-    .navbar a {
-        color: white;
-        text-decoration: none;
-        margin-left: 1.5rem;
-        font-weight: 500;
-    }
-    .navbar a:hover {
-        color: #48BB78;
+    .st-emotion-cache-16txtl3 {
+        padding-top: 2rem;
     }
     .content-container {
         padding: 2rem 5%;
     }
     .main-title {
         text-align: center;
-        color: white;
-        font-size: 2.5rem;
-        font-weight: bold;
-        margin-bottom: 2rem;
+        color: #48BB78;
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
         margin-top: 2rem;
+        letter-spacing: 1.5px;
     }
     .book-card-wrapper {
-        padding: 0.5rem;
+        padding: 0.75rem;
     }
     .book-card {
-        background-color: #191919;
-        border-radius: 0.5rem;
+        background-color: #1a202c;
+        border-radius: 10px;
         overflow: hidden;
         color: white;
         height: 100%;
         display: flex;
         flex-direction: column;
-        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
-        transition: transform 0.2s;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid #2d3748;
     }
     .book-card:hover {
-        transform: translateY(-5px);
+        transform: translateY(-10px) scale(1.03);
+        box-shadow: 0 12px 24px rgba(72, 187, 120, 0.2);
     }
     .book-card img {
         width: 100%;
@@ -91,13 +79,17 @@ st.markdown("""
     }
     .book-card-content {
         padding: 1rem;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
     }
     .book-card-content h3 {
         font-size: 1.1rem;
-        font-weight: bold;
+        font-weight: 600;
         margin: 0 0 0.5rem 0;
         height: 3.3em; 
         overflow: hidden;
+        flex-grow: 1;
     }
     .book-card-content p {
         font-size: 0.9rem;
@@ -110,14 +102,84 @@ st.markdown("""
         margin-top: 3rem;
         color: #A0AEC0;
         font-size: 0.9rem;
+        border-top: 1px solid #2d3748;
     }
     .footer a {
         color: #48BB78;
         text-decoration: none;
+        transition: color 0.2s;
+    }
+    .footer a:hover {
+        color: #fff;
+    }
+    .navbar {
+        background-color: rgba(26, 32, 44, 0.8);
+        backdrop-filter: blur(10px);
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+        border-bottom: 1px solid #2d3748;
+    }
+    .navbar h1 {
+        color: #48BB78;
+        margin: 0;
+        font-size: 1.5rem;
+    }
+    .navbar a {
+        color: white;
+        text-decoration: none;
+        margin-left: 1.5rem;
+        font-weight: 500;
+        transition: color 0.2s;
+    }
+    .navbar a:hover {
+        color: #48BB78;
+    }
+    .main-content-wrapper {
+        padding-top: 80px;
+    }
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 0.1rem;
+    }
+
+    /* Mobile Responsive Styles */
+    @media (max-width: 768px) {
+        .main-title {
+            font-size: 2.2rem;
+        }
+        .navbar h1 {
+            font-size: 1.2rem;
+        }
+        .content-container {
+            padding: 1rem 3%;
+        }
+        .grid-container {
+            grid-template-columns: repeat(2, 1fr); /* 2 columns on mobile */
+        }
+        .book-card-wrapper {
+            padding: 0.3rem;
+        }
+        .book-card-content h3 {
+            font-size: 0.9rem;
+            height: 3.6em;
+        }
+        .book-card-content p {
+            font-size: 0.8rem;
+        }
     }
 </style>
 """, unsafe_allow_html=True)
 
+
+# --- Top Navigation Bar ---
 st.markdown("""
 <div class="navbar" id="top">
     <h1>📚 Book Recommendation System</h1>
@@ -128,8 +190,11 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-st.markdown('<div class="content-container">', unsafe_allow_html=True)
 
+# --- Main Content Area ---
+st.markdown('<div class="main-content-wrapper"><div class="content-container">', unsafe_allow_html=True)
+
+# --- Recommend Section ---
 if pt is not None:
     st.markdown("<h2 class='main-title' id='recommend'>📖 Recommend Books</h2>", unsafe_allow_html=True)
 
@@ -149,60 +214,78 @@ if pt is not None:
             index = np.where(pt.index == selected_book_name)[0][0]
             similar_items = sorted(list(enumerate(similarity_score[index])), key=lambda x: x[1], reverse=True)[1:6]
 
-            rec_cols = st.columns(5)
-            
-            for i, item in enumerate(similar_items):
-                with rec_cols[i]:
-                    temp_df = books[books['Book-Title'] == pt.index[item[0]]]
-                    rec_title = temp_df.drop_duplicates('Book-Title')['Book-Title'].values[0]
-                    rec_author = temp_df.drop_duplicates('Book-Title')['Book-Author'].values[0]
-                    rec_image = temp_df.drop_duplicates('Book-Title')['Image-URL-M'].values[0]
-
-                    st.markdown(f"""
-                    <div class="book-card-wrapper">
-                        <div class="book-card">
-                            <img src="{rec_image}" alt="{rec_title}">
-                            <div class="book-card-content">
-                                <h3>{rec_title}</h3>
-                                <p>Author: {rec_author}</p>
-                            </div>
+            cards_html = ""
+            for item in similar_items:
+                temp_df = books[books['Book-Title'] == pt.index[item[0]]]
+                rec_title = temp_df.drop_duplicates('Book-Title')['Book-Title'].values[0]
+                rec_author = temp_df.drop_duplicates('Book-Title')['Book-Author'].values[0]
+                rec_image = temp_df.drop_duplicates('Book-Title')['Image-URL-M'].values[0]
+                cards_html += f"""
+                <div class="book-card-wrapper">
+                    <div class="book-card">
+                        <img src="{rec_image}" alt="{rec_title}">
+                        <div class="book-card-content">
+                            <h3>{rec_title}</h3>
+                            <p>Author: {rec_author}</p>
                         </div>
                     </div>
-                    """, unsafe_allow_html=True)
+                </div>
+                """
+            st.markdown(f'<div class="grid-container">{cards_html}</div>', unsafe_allow_html=True)
 
+
+# --- Home Section (Top 50 Books) ---
 if popular_df is not None:
     st.markdown("<h2 class='main-title' id='home'>🏆 Top 50 Books</h2>", unsafe_allow_html=True)
     
-    num_columns = 5
-    cols = st.columns(num_columns)
+    search_query = st.text_input("", placeholder="Search for a book by title or author...", label_visibility="collapsed")
 
-    for i in range(50):
-        with cols[i % num_columns]:
-            st.markdown(f"""
-            <div class="book-card-wrapper">
-                <div class="book-card">
-                    <img src="{popular_df['Image-URL-M'].iloc[i]}" alt="{popular_df['Book-Title'].iloc[i]}">
-                    <div class="book-card-content">
-                        <h3>{popular_df['Book-Title'].iloc[i]}</h3>
-                        <p>Author: {popular_df['Book-Author'].iloc[i]}</p>
-                        <p>Votes: {popular_df['num_ratings'].iloc[i]}</p>
-                        <p>Rating: {popular_df['avg_rating'].iloc[i]:.2f} ★★★★★</p>
+    with st.spinner('Loading your favorite books...'):
+        if search_query:
+            filtered_df = popular_df[
+                popular_df['Book-Title'].str.contains(search_query, case=False, na=False) |
+                popular_df['Book-Author'].str.contains(search_query, case=False, na=False)
+            ]
+        else:
+            filtered_df = popular_df.head(50)
+
+        if not filtered_df.empty:
+            filtered_df = filtered_df.reset_index()
+            cards_html = ""
+            for i, row in filtered_df.iterrows():
+                cards_html += f"""
+                <div class="book-card-wrapper">
+                    <div class="book-card">
+                        <img src="{row['Image-URL-M']}" alt="{row['Book-Title']}">
+                        <div class="book-card-content">
+                            <h3>{row['Book-Title']}</h3>
+                            <p>Author: {row['Book-Author']}</p>
+                            <p>Votes: {row['num_ratings']}</p>
+                            <p>Rating: {row['avg_rating']:.2f} ★★★★★</p>
+                        </div>
                     </div>
                 </div>
-            </div>
-            """, unsafe_allow_html=True)
+                """
+            st.markdown(f'<div class="grid-container">{cards_html}</div>', unsafe_allow_html=True)
+        elif search_query:
+            st.warning("No books found matching your search criteria.")
 
-st.markdown("</div>", unsafe_allow_html=True)
+st.markdown("</div></div>", unsafe_allow_html=True)
+
+
+# --- Footer ---
 st.markdown("""
 <div class="footer">
     <p>© 2025 Book Recommendation System | Made with ♥ using Flask & Bootstrap</p>
     <p>
         <a href="mailto:nandini9107@gmail.com">📧 Contact Us</a> | 
-        <a href="https://github.com/Nandini776" target="_blank">👨‍💻 GitHub</a> | 
-        <a href="#top">⬆ Back to Top</a>
+        <a href="https://github.com/Nandini776" target="_blank">👨‍💻 GitHub</a> |
+        <a href="#top">⬆️ Back to Top</a>
     </p>
 </div>
 """, unsafe_allow_html=True)
+
+
 
 
 
