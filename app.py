@@ -37,22 +37,21 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
+st.title("My Book Recommender System")
+
 @st.cache_data
 def load_data():
     try:
-        # Load the popular books data
         popular_df = pickle.load(open('popular.pkl', 'rb'))
         
-        # Extract lists for Top 50 Books display
         book_name = popular_df['Book-Title'].tolist()
         author = popular_df['Book-Author'].tolist()
         image = popular_df['Image-URL-M'].tolist()
         votes = popular_df['num_ratings'].tolist()
         rating = popular_df['avg_rating'].tolist()
         
-        # Load the main book data and the similarity matrix (needed for recommendations)
-        pt = pickle.load(open('pt.pkl', 'rb')) # Pivot table
-        books = pickle.load(open('books.pkl', 'rb')) # Books DataFrame
+        pt = pickle.load(open('pt.pkl', 'rb'))
+        books = pickle.load(open('books.pkl', 'rb'))
         similarity_scores = pickle.load(open('similarity_score.pkl', 'rb'))
         
         return book_name, author, image, votes, rating, pt, books, similarity_scores
@@ -73,9 +72,7 @@ def recommend(book_title):
         st.warning(f"Book '{book_title}' not found in the trained recommendation data.")
         return [], [], []
 
-    # get index of the selected book
     index = np.where(pt.index == book_title)[0][0]
-    # Calculate similarity scores and get top 5 (excluding the book itself)
     similar_items = sorted(list(enumerate(similarity_scores[index])), key=lambda x: x[1], reverse=True)[1:6]
 
     data = []
@@ -88,7 +85,6 @@ def recommend(book_title):
         
         data.append(item)
     
-    # Process data list into separate lists for Streamlit display
     rec_names = [d[0] for d in data]
     rec_authors = [d[1] for d in data]
     rec_images = [d[2] for d in data]
@@ -96,9 +92,7 @@ def recommend(book_title):
     return rec_names, rec_authors, rec_images
 
 
-# Helper function to create star rating display
 def get_star_rating(avg_rating):
-    # Convert numerical rating to a string of Unicode stars
     stars_full = '★' * int(avg_rating)
     stars_half = '½' if (avg_rating - int(avg_rating)) >= 0.5 else ''
     stars_empty = '☆' * (5 - int(avg_rating) - (1 if stars_half else 0))
@@ -120,7 +114,6 @@ with tab1:
             
             st.image(image[i], width=150)
             
-            # Use improved formatting with HTML/Markdown
             st.markdown(f"""
                 <div class="book-details">
                     **Author:** {author[i]}<br>
@@ -144,7 +137,6 @@ with tab2:
         
         st.subheader(f"Recommendations for {selected_book}")
         
-        # Adjust columns based on the number of actual recommendations (up to 5)
         rec_cols = st.columns(len(recommended_books) if recommended_books else 1) 
         
         for j in range(len(recommended_books)):
@@ -156,12 +148,13 @@ with tab2:
 with tab3:
     st.title("Contact Us")
     st.write("Thank you for using the My Book Recommender system. For inquiries, technical support, or feedback, please reach out.")
-    st.markdown("""
+    st.markdown(f"""
         <div style="padding: 20px; background-color: #2c3e50; border-radius: 10px;">
-            <p><strong>Email:</strong> support@bookrecommender.com</p>
-            <p><strong>GitHub:</strong> [Link to your GitHub Repo]</p>
+            <p><strong>Email:</strong> <a href="mailto:nandini9107@gmail.com" style="color: #00bcd4;">nandini9107@gmail.com</a></p>
+            <p><strong>GitHub:</strong> <a href="https://github.com/Nandini776" style="color: #00bcd4;" target="_blank">https://github.com/Nandini776</a></p>
             <p><strong>Phone:</strong> +1-555-BOOK-REC</p>
         </div>
         """, unsafe_allow_html=True)
+
 
 
