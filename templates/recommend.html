@@ -13,7 +13,6 @@
       overflow-x: hidden;
     }
 
-    /* Navbar */
     .navbar {
       background: rgba(0, 166, 90, 0.15);
       backdrop-filter: blur(12px);
@@ -49,7 +48,6 @@
       width: 100%;
     }
 
-    /* Search Box */
     .search-box {
       background-color: #1a1a1a;
       border-radius: 15px;
@@ -81,7 +79,6 @@
       transform: scale(1.05);
     }
 
-    /* Cards */
     .card {
       border: none;
       background: linear-gradient(145deg, #1a1a1a, #101010);
@@ -110,37 +107,30 @@
       color: #ccc;
     }
 
-    /* Footer */
-    /* Footer */
 footer {
   background: #0f0f0f;
   border-top: 1px solid #222;
   padding: 30px 0;
   color: #aaa;
   margin-top: 80px;
-  text-align: center; /* Center all text */
+  text-align: center;
 }
-
 footer a {
   color: #00ff99;
   text-decoration: none;
   transition: 0.3s;
 }
-
 footer a:hover {
   color: #00cc70;
   text-decoration: underline;
 }
-
 footer p {
-  margin: 5px 0; /* Add small spacing between lines */
+  margin: 5px 0;
 }
-
   </style>
 </head>
 <body>
 
-  <!-- Navbar -->
   <nav class="navbar navbar-expand-lg navbar-dark px-4">
     <a class="navbar-brand" href="/">📚 Book Recommendation System</a>
     <div class="ms-auto d-flex align-items-center">
@@ -149,11 +139,16 @@ footer p {
     </div>
   </nav>
 
-  <!-- Search -->
   <div class="container text-center">
     <div class="search-box mx-auto col-md-8">
-      <form action="/recommend_books" method="post">
-        <input type="text" name="user_input" placeholder="🔍 Type a book name...">
+      <form action="/recommend_books" method="post" autocomplete="off">
+        <input name="user_input" id="bookInput" class="form-control" placeholder="🔍 Type a book name..."
+               list="book-list" autocomplete="off" autocorrect="off" spellcheck="false"><br>
+        <datalist id="book-list">
+          {% for book in book_name %}
+            <option value="{{ book }}">
+          {% endfor %}
+        </datalist>
         <button type="submit" class="btn btn-custom mt-3">Get Recommendations</button>
       </form>
     </div>
@@ -180,7 +175,6 @@ footer p {
     {% endif %}
   </div>
 
-  <!-- Footer -->
   <footer>
     <p>© 2025 My Book Recommender | Explore your next favorite read 📘</p>
     <p>
@@ -189,6 +183,32 @@ footer p {
       <a href="#">🔝 Back to Top</a>
     </p>
   </footer>
+
+  <script>
+    const input = document.getElementById('bookInput');
+    const datalist = document.getElementById('book-list');
+
+    input.addEventListener('input', () => {
+      const query = input.value;
+
+      if (query.length < 2) {
+        datalist.innerHTML = '';
+        return;
+      }
+
+      fetch(/get_book_suggestions?q=${encodeURIComponent(query)})
+        .then(response => response.json())
+        .then(data => {
+          datalist.innerHTML = '';
+          data.books.forEach(book => {
+            const option = document.createElement('option');
+            option.value = book;
+            datalist.appendChild(option);
+          });
+        })
+        .catch(error => console.error('Error fetching suggestions:', error));
+    });
+  </script>
 
 </body>
 </html>
