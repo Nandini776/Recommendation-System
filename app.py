@@ -17,7 +17,7 @@ app = Flask(_name_)
 # -----------------------------
 # Google Books Cover Helper
 # -----------------------------
-GOOGLE_BOOKS_API_KEY = "YOUR_API_KEY"  # 🔹 Replace with your real key
+GOOGLE_BOOKS_API_KEY = "AIzaSyAwI6A05ZJvHRILm0UbqATst_I_q0iCO6c"  # 🔹 Replace with your real key
 
 
 def get_google_books_cover(title):
