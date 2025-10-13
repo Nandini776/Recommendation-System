@@ -18,7 +18,6 @@ def load_data():
         st.error("❌ One or more pickle files not found. Please ensure all required files are in the directory.")
         return None, None, None, None
 
-
 popular_df, pt, books, similarity_score = load_data()
 
 # -----------------------------
@@ -44,15 +43,12 @@ st.markdown("""
     .main .block-container {
         padding: 0;
     }
-
-    /* Navbar */
     .navbar {
         background-color: #1a202c;
         padding: 1rem 2rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        flex-wrap: wrap;
         width: 100%;
     }
     .navbar h1 {
@@ -69,41 +65,30 @@ st.markdown("""
     .navbar a:hover {
         color: #48BB78;
     }
-
-    /* Container */
     .content-container {
         padding: 2rem 5%;
     }
-
-    /* Title */
     .main-title {
         text-align: center;
         color: white;
-        font-size: 2.3rem;
+        font-size: 2.5rem;
         font-weight: bold;
         margin-bottom: 2rem;
         margin-top: 2rem;
     }
-
-    /* Responsive Grid */
-    .book-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 1.2rem;
-        width: 100%;
+    .book-card-wrapper {
+        padding: 0.5rem;
     }
-
-    /* Book Cards */
     .book-card {
         background-color: #191919;
-        border-radius: 0.75rem;
+        border-radius: 0.5rem;
         overflow: hidden;
         color: white;
+        height: 100%;
         display: flex;
         flex-direction: column;
-        height: 100%;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-        transition: transform 0.2s ease;
+        box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+        transition: transform 0.2s;
     }
     .book-card:hover {
         transform: translateY(-5px);
@@ -117,24 +102,17 @@ st.markdown("""
         padding: 1rem;
     }
     .book-card-content h3 {
-        font-size: 1rem;
+        font-size: 1.1rem;
         font-weight: bold;
         margin: 0 0 0.5rem 0;
-        height: 3.2em;
+        height: 3.3em; 
         overflow: hidden;
     }
     .book-card-content p {
-        font-size: 0.85rem;
+        font-size: 0.9rem;
         color: #A0AEC0;
         margin: 0.25rem 0;
     }
-
-    /* Recommendation Section */
-    .rec-container {
-        margin-top: 3rem;
-    }
-
-    /* Footer */
     .footer {
         text-align: center;
         padding: 2rem;
@@ -145,26 +123,6 @@ st.markdown("""
     .footer a {
         color: #48BB78;
         text-decoration: none;
-    }
-
-    /* Mobile Fixes */
-    @media (max-width: 768px) {
-        .navbar {
-            flex-direction: column;
-            align-items: flex-start;
-        }
-        .navbar a {
-            margin: 0.5rem 0 0 0;
-        }
-        .main-title {
-            font-size: 1.8rem;
-        }
-        .book-card img {
-            height: 220px;
-        }
-        .book-card-content h3 {
-            font-size: 0.95rem;
-        }
     }
 </style>
 """, unsafe_allow_html=True)
@@ -177,7 +135,6 @@ st.markdown("""
     <h1>📚 Book Recommendation System</h1>
     <div>
         <a href="#home">Home</a>
-        <a href="#recommend">Recommend</a>
     </div>
 </div>
 """, unsafe_allow_html=True)
@@ -189,10 +146,14 @@ st.markdown('<div class="content-container">', unsafe_allow_html=True)
 # -----------------------------
 if pt is not None:
     st.markdown("<h2 class='main-title' id='recommend'>🔍 Find Similar Books</h2>", unsafe_allow_html=True)
-    st.markdown("<div class='rec-container'>", unsafe_allow_html=True)
 
+    # Dropdown with placeholder
     book_list = ["Type a book name..."] + list(pt.index)
-    selected_book_name = st.selectbox("Search your favorite book:", book_list, index=0)
+    selected_book_name = st.selectbox(
+        "Search your favorite book:",
+        book_list,
+        index=0
+    )
 
     if st.button('Show Recommendations'):
         if selected_book_name == "Type a book name...":
@@ -202,26 +163,27 @@ if pt is not None:
             
             index = np.where(pt.index == selected_book_name)[0][0]
             similar_items = sorted(list(enumerate(similarity_score[index])), key=lambda x: x[1], reverse=True)[1:6]
+
+            rec_cols = st.columns(5)
             
-            st.markdown("<div class='book-grid'>", unsafe_allow_html=True)
-            for item in similar_items:
-                temp_df = books[books['Book-Title'] == pt.index[item[0]]]
-                rec_title = temp_df.drop_duplicates('Book-Title')['Book-Title'].values[0]
-                rec_author = temp_df.drop_duplicates('Book-Title')['Book-Author'].values[0]
-                rec_image = temp_df.drop_duplicates('Book-Title')['Image-URL-M'].values[0]
+            for i, item in enumerate(similar_items):
+                with rec_cols[i]:
+                    temp_df = books[books['Book-Title'] == pt.index[item[0]]]
+                    rec_title = temp_df.drop_duplicates('Book-Title')['Book-Title'].values[0]
+                    rec_author = temp_df.drop_duplicates('Book-Title')['Book-Author'].values[0]
+                    rec_image = temp_df.drop_duplicates('Book-Title')['Image-URL-M'].values[0]
 
-                st.markdown(f"""
-                <div class="book-card">
-                    <img src="{rec_image}" alt="{rec_title}">
-                    <div class="book-card-content">
-                        <h3>{rec_title}</h3>
-                        <p>Author: {rec_author}</p>
+                    st.markdown(f"""
+                    <div class="book-card-wrapper">
+                        <div class="book-card">
+                            <img src="{rec_image}" alt="{rec_title}">
+                            <div class="book-card-content">
+                                <h3>{rec_title}</h3>
+                                <p>Author: {rec_author}</p>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                """, unsafe_allow_html=True)
-            st.markdown("</div>", unsafe_allow_html=True)
-
-    st.markdown("</div>", unsafe_allow_html=True)
+                    """, unsafe_allow_html=True)
 
 # -----------------------------
 # Top 50 Books Section
@@ -229,20 +191,24 @@ if pt is not None:
 if popular_df is not None:
     st.markdown("<h2 class='main-title' id='home'>🏆 Top 50 Books</h2>", unsafe_allow_html=True)
     
-    st.markdown("<div class='book-grid'>", unsafe_allow_html=True)
-    for i in range(len(popular_df)):
-        st.markdown(f"""
-        <div class="book-card">
-            <img src="{popular_df['Image-URL-M'].iloc[i]}" alt="{popular_df['Book-Title'].iloc[i]}">
-            <div class="book-card-content">
-                <h3>{popular_df['Book-Title'].iloc[i]}</h3>
-                <p>Author: {popular_df['Book-Author'].iloc[i]}</p>
-                <p>Votes: {popular_df['num_ratings'].iloc[i]}</p>
-                <p>Rating: {popular_df['avg_rating'].iloc[i]:.2f} ★</p>
+    num_columns = 5
+    cols = st.columns(num_columns)
+
+    for i in range(50):
+        with cols[i % num_columns]:
+            st.markdown(f"""
+            <div class="book-card-wrapper">
+                <div class="book-card">
+                    <img src="{popular_df['Image-URL-M'].iloc[i]}" alt="{popular_df['Book-Title'].iloc[i]}">
+                    <div class="book-card-content">
+                        <h3>{popular_df['Book-Title'].iloc[i]}</h3>
+                        <p>Author: {popular_df['Book-Author'].iloc[i]}</p>
+                        <p>Votes: {popular_df['num_ratings'].iloc[i]}</p>
+                        <p>Rating: {popular_df['avg_rating'].iloc[i]:.2f} ★★★★★</p>
+                    </div>
+                </div>
             </div>
-        </div>
-        """, unsafe_allow_html=True)
-    st.markdown("</div>", unsafe_allow_html=True)
+            """, unsafe_allow_html=True)
 
 # -----------------------------
 # Footer
@@ -258,6 +224,7 @@ st.markdown("""
     </p>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
