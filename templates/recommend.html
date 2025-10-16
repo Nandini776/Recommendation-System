@@ -7,21 +7,20 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     body {
+      font-family: 'Poppins', sans-serif;
       background: radial-gradient(circle at top, #0a0a0a, #121212);
       color: #f8f9fa;
-      font-family: 'Poppins', sans-serif;
       overflow-x: hidden;
       scroll-behavior: smooth;
     }
 
-    /* Navbar */
     .navbar {
       background: rgba(0, 166, 90, 0.15);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid rgba(0, 255, 120, 0.1);
       position: sticky;
       top: 0;
-      z-index: 1000;
+      z-index: 999;
     }
     .navbar-brand {
       font-weight: 700;
@@ -43,7 +42,7 @@
       left: 0;
       width: 0;
       height: 2px;
-      background-color: #00ff99;
+      background: #00ff99;
       transition: width 0.3s;
     }
     .nav-link:hover::after,
@@ -51,23 +50,21 @@
       width: 100%;
     }
 
-    /* Title */
     h1 {
       background: linear-gradient(90deg, #00ff99, #00cc66);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       font-size: 2.2rem;
       font-weight: 700;
-      margin-bottom: 2rem;
       text-align: center;
+      margin-bottom: 2rem;
     }
 
-    /* Cards */
     .card {
       border: none;
       background: linear-gradient(145deg, #1a1a1a, #101010);
       border-radius: 20px;
-      transition: all 0.4s ease;
+      transition: 0.4s ease;
     }
     .card:hover {
       transform: translateY(-8px) scale(1.03);
@@ -75,9 +72,9 @@
     }
     .card img {
       width: 150px;
+      margin: 15px auto 0;
       height: auto;
       object-fit: cover;
-      margin: 15px auto 0;
       display: block;
     }
     .card-body h4 {
@@ -90,12 +87,11 @@
       color: #ccc;
     }
 
-    /* Footer */
     footer {
       background: #0f0f0f;
       border-top: 1px solid #222;
-      padding: 30px 0;
       color: #aaa;
+      padding: 30px 0;
       margin-top: 80px;
       text-align: center;
     }
@@ -115,7 +111,6 @@
 </head>
 <body>
 
-  <!-- Navbar -->
   <nav class="navbar navbar-expand-lg navbar-dark px-4">
     <a class="navbar-brand" href="/">📚 Book Recommendation System</a>
     <div class="ms-auto d-flex align-items-center">
@@ -124,20 +119,27 @@
     </div>
   </nav>
 
-  <!-- Main Content -->
   <div class="container mt-5">
     <h1>🔍 Find Book Recommendations</h1>
 
-    <form action="/recommend_books" method="post" class="text-center">
-      <input name="user_input" id="bookInput" class="form-control w-75 mx-auto" placeholder="Type a book name..." list="book-list" autocomplete="off"><br>
+    <form method="post" action="/recommend_books" class="text-center">
+      <input 
+        type="text" 
+        name="user_input" 
+        id="bookField" 
+        class="form-control w-75 mx-auto" 
+        placeholder="Type a book name..." 
+        list="booksData" 
+        autocomplete="off">
+      <br>
 
-      <datalist id="book-list">
-        {% for book in book_name %}
-          <option value="{{ book }}">
+      <datalist id="booksData">
+        {% for title in book_name %}
+          <option value="{{ title }}">
         {% endfor %}
       </datalist>
 
-      <button type="submit" class="btn btn-lg btn-success px-5">Recommend</button>
+      <button class="btn btn-lg btn-success px-5" type="submit">Recommend</button>
     </form>
 
     {% if error %}
@@ -146,13 +148,13 @@
 
     {% if data %}
       <div class="row mt-4">
-        {% for book in data %}
+        {% for b in data %}
           <div class="col-md-2 mb-4">
             <div class="card text-white h-100">
-              <img src="{{ book[2] }}" alt="{{ book[0] }}">
+              <img src="{{ b[2] }}" alt="{{ b[0] }}">
               <div class="card-body text-center">
-                <h4>{{ book[0] }}</h4>
-                <h6>{{ book[1] }}</h6>
+                <h4>{{ b[0] }}</h4>
+                <h6>{{ b[1] }}</h6>
               </div>
             </div>
           </div>
@@ -161,47 +163,46 @@
     {% endif %}
   </div>
 
-  <!-- Footer -->
   <footer>
     <p>© 2025 Book Recommendation System | Made with ❤ using Flask & Bootstrap</p>
     <p>
       📬 <a href="mailto:nandini9107@gmail.com">Contact Us</a> |
       🌐 <a href="https://github.com/Nandini776" target="_blank">GitHub</a> |
-      <a href="#top" id="backToTop">🔝 Back to Top</a>
+      <a href="#top" id="scrollTop">🔝 Back to Top</a>
     </p>
   </footer>
 
   <script>
-    // Smooth Back to Top
-    document.getElementById('backToTop').addEventListener('click', (e) => {
+    const backBtn = document.getElementById('scrollTop');
+    backBtn.addEventListener('click', e => {
       e.preventDefault();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 
-    // Book suggestions
-    const input = document.getElementById('bookInput');
-    const datalist = document.getElementById('book-list');
+    const inputBox = document.getElementById('bookField');
+    const dataList = document.getElementById('booksData');
 
-    input.addEventListener('input', () => {
-      const query = input.value;
-      if (query.length < 2) {
-        datalist.innerHTML = '';
+    inputBox.addEventListener('input', () => {
+      const text = inputBox.value.trim();
+      if (text.length < 2) {
+        dataList.innerHTML = '';
         return;
       }
 
-      fetch(/get_book_suggestions?q=${encodeURIComponent(query)})
-        .then(response => response.json())
-        .then(data => {
-          datalist.innerHTML = '';
-          data.books.forEach(book => {
-            const option = document.createElement('option');
-            option.value = book;
-            datalist.appendChild(option);
+      fetch(`/get_book_suggestions?q=${encodeURIComponent(text)}`)
+        .then(res => res.json())
+        .then(result => {
+          dataList.innerHTML = '';
+          result.books.forEach(item => {
+            const opt = document.createElement('option');
+            opt.value = item;
+            dataList.appendChild(opt);
           });
         })
-        .catch(error => console.error('Error fetching suggestions:', error));
+        .catch(err => console.error('Suggestion fetch error:', err));
     });
   </script>
 
 </body>
 </html>
+
